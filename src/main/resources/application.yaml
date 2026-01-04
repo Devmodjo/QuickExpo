@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: 5minexpo
+
+  datasource:
+    url: jdbc:postgresql://postgres:ZMysbFJ0G3K7uTQl@db.euamxtrvloebtwqwdhfo.supabase.co:5432/postgres
+    username: postgres
+    password: ZMysbFJ0G3K7uTQl
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      data-source-properties:
+        ssl: true
+        sslmode: require
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format-sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: 8585
+  
