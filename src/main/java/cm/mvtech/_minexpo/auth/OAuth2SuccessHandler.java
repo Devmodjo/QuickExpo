@@ -6,11 +6,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 /**
  * gestionnaire de l'authentification OAuth2 qui verifie permet l'authentification et l'inscription(automatique)
@@ -30,29 +32,47 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     ) throws IOException {
 
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+        OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken) authentication;
 
-        String email = oAuth2User.getAttribute("email");
-        String name = oAuth2User.getAttribute("name");
-        String picture = oAuth2User.getAttribute("avatar_url"); // github
-        if (picture == null) {
-            picture = oAuth2User.getAttribute("image"); // google
+        String provider = authToken.getAuthorizedClientRegistrationId().toUpperCase();
+
+        String email = null;
+        String fullName = null;
+        String picture = null;
+
+        if ("GOOGLE".equals(provider)) {
+            email = oAuth2User.getAttribute("email");
+            fullName = oAuth2User.getAttribute("name");
+            picture = oAuth2User.getAttribute("picture");
         }
 
-        String provider =  authentication.getAuthorities().toString().contains("github") ? "GITHUB" : "GOOGLE";
+        if ("GITHUB".equals(provider)) {
+            email = oAuth2User.getAttribute("email"); // souvent null
+            fullName = oAuth2User.getAttribute("name");
+            picture = oAuth2User.getAttribute("avatar_url");
+
+            if (email == null) {
+                String login = oAuth2User.getAttribute("login");
+                email = login + "@github.local";
+            }
+        }
+
+        String finalEmail = email;
 
         String finalPicture = picture;
-        userRepository.findByEmail(email)
+        String finalFullName = fullName;
+        userRepository.findByEmail(finalEmail)
                 .orElseGet(() -> {
                     User user = new User();
-                    user.setEmail(email);
-                    user.setFullName(name);
+                    user.setEmail(finalEmail);
+                    user.setFullName(finalFullName);
                     user.setPictureUrl(finalPicture);
                     user.setProvider(provider);
+                    user.setCreatedAt(LocalDateTime.now());
                     return userRepository.save(user);
                 });
 
-        // redirege ver le dashbord de l'application(front)
-        // url de test en attendant la mise en place du front
-        response.sendRedirect("http://localhost:8080/auth/success");
+        // TEMPORAIRE (pas de front encore)
+        response.sendRedirect("/auth/success");
     }
 }
