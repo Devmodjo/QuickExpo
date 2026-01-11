@@ -1,6 +1,7 @@
 package cm.mvtech._minexpo.beans;
 
 import cm.mvtech._minexpo.enums.OrderStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -54,6 +55,11 @@ public class Order {
 
     @Column(name = "paid_at")
     private LocalDateTime paidAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "users_id", nullable = false)
+    @JsonIgnore
+    private User user;
 
     public Order(String theme, String subject, String level, int pages) {
         this.id = UUID.randomUUID();

@@ -2,7 +2,9 @@ package cm.mvtech._minexpo.services;
 
 import cm.mvtech._minexpo.beans.Order;
 import cm.mvtech._minexpo.model.dto.OrderCreateRequestDTO;
+import cm.mvtech._minexpo.model.dto.OrderResponseDTO;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -10,7 +12,7 @@ import java.util.UUID;
  */
 public interface OrderService {
 
-    Order createOrder(OrderCreateRequestDTO orderCreateRequestDTO);
+    OrderResponseDTO createOrder(OrderCreateRequestDTO orderCreateRequestDTO);
 
     void markOrderAsPaid(UUID uuid, String paymentReference);
 
@@ -19,4 +21,6 @@ public interface OrderService {
     void markAsCompleted(Order order, String documentPath);
 
     void markAsFailed(Order order);
+
+    List<OrderResponseDTO> getOrdersForCurrentUser();
 }
