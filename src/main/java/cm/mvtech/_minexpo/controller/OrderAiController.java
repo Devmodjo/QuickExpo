@@ -1,0 +1,39 @@
+package cm.mvtech._minexpo.controller;
+
+
+import cm.mvtech._minexpo.beans.Order;
+import cm.mvtech._minexpo.enums.OrderStatus;
+import cm.mvtech._minexpo.model.dto.ApiResponse;
+import cm.mvtech._minexpo.model.dto.OrderCreateRequestDTO;
+import cm.mvtech._minexpo.services.AiGenerationService;
+import cm.mvtech._minexpo.services.OrderService;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+@RestController
+@RequestMapping("api/orders")
+@RequiredArgsConstructor
+@Tag(name = "ORDER AI CONTROLLER", description = "mise en place de la generation Preview IA")
+public class OrderAiController {
+
+    private final AiGenerationService aiGenerationService;
+
+    @PostMapping("/preview")
+    public ResponseEntity<ApiResponse> preview(@RequestBody OrderCreateRequestDTO orderCreateRequestDTO, Authentication authentication) {
+
+        if (!authentication.isAuthenticated()) {
+            throw new AccessDeniedException("utilisateur non authentifier");
+        }
+        Order order = new Order(orderCreateRequestDTO.theme(), orderCreateRequestDTO.subject(), orderCreateRequestDTO.level(), orderCreateRequestDTO.pages(), orderCreateRequestDTO.description());
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ApiResponse(true, aiGenerationService.generatePreview(order)));
+
+    }
+}
+

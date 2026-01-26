@@ -20,15 +20,15 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AiGenerationServiceImpl implements AiGenerationService {
 
-    private final PromptBuilder promptBuilder;
+    //private final PromptBuilder promptBuilder;
     private final HuggingFaceClient huggingFaceClient;
 
     @Override
     public String generatePreview(Order order) {
 
-        String prompt = PromptBuilder.build(order);
+        String prompt = PromptBuilder.build(order.getTheme(), order.getSubject(), order.getLevel(), order.getPages(), order.getDescription());
 
-        log.info("AI PREVIEW generated for Oder {}", order.getId());
+        log.info("AI PREVIEW generated for Order {}", order.getId());
         return huggingFaceClient.generateText(prompt);
     }
 }

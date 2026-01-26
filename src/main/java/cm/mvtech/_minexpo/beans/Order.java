@@ -34,6 +34,9 @@ public class Order {
     @Column(nullable = false)
     private int pages;
 
+    @Column
+    private String description;
+
     @Column(name = "word_count")
     private int wordCount;
 
@@ -61,12 +64,13 @@ public class Order {
     @JsonIgnore
     private User user;
 
-    public Order(String theme, String subject, String level, int pages) {
+    public Order(String theme, String subject, String level, int pages, String description) {
         this.id = UUID.randomUUID();
         this.theme = theme;
         this.subject = subject;
         this.level = level;
         this.pages = pages;
+        this.description = description;
         this.status = OrderStatus.PENDING;
         this.createdAt = LocalDateTime.now();
     }
