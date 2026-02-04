@@ -33,7 +33,7 @@ Le système repose sur :
 graph TD
     A[Frontend React<br/>Vercel] -->|REST API| B[Backend Spring Boot<br/>Render]
     B -->|JPA/Hibernate| C[PostgreSQL<br/>Neon.tech]
-    B -->|API Call| D[HuggingFace<br/>Mistral AI]
+    B -->|API Call| D[HuggingFace<br/>Qwen AI]
 ```
 ---
 
