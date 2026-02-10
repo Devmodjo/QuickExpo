@@ -1,16 +1,43 @@
 spring:
   application:
-    name: 5minexpo
+    name: QuickExpo
 
   datasource:
-    url: jdbc:postgresql://postgres:ZMysbFJ0G3K7uTQl@db.euamxtrvloebtwqwdhfo.supabase.co:5432/postgres
-    username: postgres
-    password: ZMysbFJ0G3K7uTQl
+    url: jdbc:postgresql://ep-polished-butterfly-a4w5gnit-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require&connectTimeout=60&socketTimeout=60
+    username: neondb_owner
+    password: npg_F9mVibon8Xcg
     driver-class-name: org.postgresql.Driver
     hikari:
-      data-source-properties:
-        ssl: true
-        sslmode: require
+      connection-timeout: 60000
+      maximum-pool-size: 5
+      idle-timeout: 300000
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 727972244042-lcva033404efa30an39qegb2h3ajo34f.apps.googleusercontent.com # ${GOOGLE_CLIENT_ID}
+            client-secret: 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 # ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+          github:
+            client-id: Ov23lirBxeVzezJcscsC
+            client-secret: fc2ab72af66d1f6611f81e3e78848a1c67979d3d
+            scope:
+              - user:email
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+          github:
+            authorization-uri: https://github.com/login/oauth/authorize
+            token-uri: https://github.com/login/oauth/access_token
+            user-info-uri: https://api.github.com/user
+            user-name-attribute: id
   jpa:
     hibernate:
       ddl-auto: update
@@ -19,7 +46,33 @@ spring:
       hibernate:
         format-sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
 
-server:
-  port: 8585
-  
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operationsSorter: alpha
+    tagsSorter: alpha
+    filter: true
+    tryItOutEnabled: true
+    displayRequestDuration: true
+
+  packages-to-scan: cm.mvtech._minexpo.controller
+  paths-to-match: /api/**, /auth/**
+
+  default-produces-media-type: application/json
+  default-consumes-media-type: application/json
+
+api:
+  ai:
+    hugging-face-key: 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
+    hugging-face-model: Qwen/Qwen2.5-7B-Instruct #mistralai/Mistral-7B-Instruct-v0.2
+
+jwt:
+  secret: 067d1fa7de5fb95b09e25321164057a413384f52e64baed01bafced5d6229f193fa7fff2b21ff7b42dbc86b0a9bb52351e1cdc75827919f59b083a3e2c99181c
+  expiration-min: 86400000

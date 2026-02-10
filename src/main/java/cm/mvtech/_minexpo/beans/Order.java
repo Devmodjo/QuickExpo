@@ -34,15 +34,14 @@ public class Order {
     @Column(nullable = false)
     private int pages;
 
-    @Column
-    private String description;
-
     @Column(name = "word_count")
     private int wordCount;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus status;
+
+    private String description;
 
     @Column(name = "payment_reference")
     private String paymentReference;
@@ -70,8 +69,8 @@ public class Order {
         this.subject = subject;
         this.level = level;
         this.pages = pages;
-        this.description = description;
         this.status = OrderStatus.PENDING;
+        this.description = description;
         this.createdAt = LocalDateTime.now();
     }
 

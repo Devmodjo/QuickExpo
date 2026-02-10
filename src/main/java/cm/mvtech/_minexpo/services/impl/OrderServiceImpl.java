@@ -50,7 +50,7 @@ public class OrderServiceImpl implements OrderService {
                 orderCreateRequestDTO.subject(),
                 orderCreateRequestDTO.level(),
                 orderCreateRequestDTO.pages(),
-                orderCreateRequestDTO.description()
+                null
         );
 
         order.setUser(user);
@@ -125,17 +125,9 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
-    @Override
     public Order getOrderOrThrow(UUID id) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        OAuth2User principal = (OAuth2User) auth.getPrincipal();
-
-        String email = principal.getAttribute("email");
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalStateException("User not found"));
-
-        return (Order) orderRepository.findByIdAndUser(id, user)
-                .orElseThrow(() -> new IllegalArgumentException("commande introuvable"));
+        return orderRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("commande introuvable")
+        );
     }
 }

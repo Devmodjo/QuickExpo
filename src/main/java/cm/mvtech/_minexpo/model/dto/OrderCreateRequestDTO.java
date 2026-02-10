@@ -18,6 +18,8 @@ public record OrderCreateRequestDTO(
         String level,
 
         @Min(1)
-        int pages
+        int pages,
+
+        String description
 
 ) {}
