@@ -1,11 +1,14 @@
 spring:
+  # import du fichier qui contient les var d'env
+  config:
+    import: optional:file:.env[.properties]
   application:
     name: QuickExpo
 
   datasource:
-    url: jdbc:postgresql://ep-polished-butterfly-a4w5gnit-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require&connectTimeout=60&socketTimeout=60
-    username: neondb_owner
-    password: npg_F9mVibon8Xcg
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
       connection-timeout: 60000
@@ -17,14 +20,14 @@ spring:
       client:
         registration:
           google:
-            client-id: 727972244042-lcva033404efa30an39qegb2h3ajo34f.apps.googleusercontent.com # ${GOOGLE_CLIENT_ID}
-            client-secret: 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 # ${GOOGLE_CLIENT_SECRET}
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
             scope:
               - email
               - profile
           github:
-            client-id: Ov23lirBxeVzezJcscsC
-            client-secret: fc2ab72af66d1f6611f81e3e78848a1c67979d3d
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
             scope:
               - user:email
         provider:
@@ -70,8 +73,8 @@ springdoc:
 
 api:
   ai:
-    hugging-face-key: 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
-    hugging-face-model: Qwen/Qwen2.5-7B-Instruct #mistralai/Mistral-7B-Instruct-v0.2
+    hugging-face-key: ${HUGGINGFACE_KEY}
+    hugging-face-model: Qwen/Qwen2.5-7B-Instruct
 
 jwt:
   secret: 067d1fa7de5fb95b09e25321164057a413384f52e64baed01bafced5d6229f193fa7fff2b21ff7b42dbc86b0a9bb52351e1cdc75827919f59b083a3e2c99181c
