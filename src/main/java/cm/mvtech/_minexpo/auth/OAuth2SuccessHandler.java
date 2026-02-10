@@ -2,6 +2,7 @@ package cm.mvtech._minexpo.auth;
 
 import cm.mvtech._minexpo.beans.User;
 import cm.mvtech._minexpo.repository.UserRepository;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final UserRepository userRepository;
+    private final JwtService jwtService;
 
     @Override
     public void onAuthenticationSuccess(
@@ -61,18 +63,31 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String finalPicture = picture;
         String finalFullName = fullName;
-        userRepository.findByEmail(finalEmail)
+        User user = userRepository.findByEmail(finalEmail)
                 .orElseGet(() -> {
-                    User user = new User();
-                    user.setEmail(finalEmail);
-                    user.setFullName(finalFullName);
-                    user.setPictureUrl(finalPicture);
-                    user.setProvider(provider);
-                    user.setCreatedAt(LocalDateTime.now());
-                    return userRepository.save(user);
+                    User newUser = new User();
+                    newUser.setEmail(finalEmail);
+                    newUser.setFullName(finalFullName);
+                    newUser.setPictureUrl(finalPicture);
+                    newUser.setProvider(provider);
+                    newUser.setCreatedAt(LocalDateTime.now());
+                    return userRepository.save(newUser);
                 });
 
-        // TEMPORAIRE (pas de front encore)
-        response.sendRedirect("/auth/success");
+        // Génération JWT
+        String jwt = jwtService.generateToken(user);
+
+        // Création cookie sécurisé
+        Cookie jwtCookie = new Cookie("auth_token", jwt);
+        jwtCookie.setHttpOnly(true);     // très important pour securisé le jwt au niveau du front
+        jwtCookie.setSecure(request.isSecure()); // true en prod (HTTPS)
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(30 * 60);
+
+        response.addCookie(jwtCookie);
+
+        // Redirection finale vers le frontend
+        String frontendSuccessUrl = "http://localhost:5173/console.generate";
+        getRedirectStrategy().sendRedirect(request, response, frontendSuccessUrl);
     }
 }
