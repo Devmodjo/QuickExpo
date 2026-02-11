@@ -154,9 +154,9 @@ export default function Home() {
               {/* Main heading */}
               <motion.h1
                 variants={fadeInUp}
-                className="text-5xl md:text-7xl font-bold font-display leading-tight mb-6 text-primary"
+                className="text-4xl md:text-7xl font-bold font-display leading-tight mb-6 text-primary break-words hyphens-auto"
               >
-                Votre assistant <br />
+                Votre assistant <br className="hidden md:block" />
                 <span className="text-secondary">méthodologique</span>
               </motion.h1>
 
@@ -173,17 +173,17 @@ export default function Home() {
               {/* CTA Buttons */}
               <motion.div
                 variants={fadeInUp}
-                className="flex justify-center item-center flex-col sm:flex-row gap-4"
+                className="flex justify-center item-center flex-col sm:flex-row gap-4 px-4 sm:px-0 w-full"
               >
                 <Button
                   onClick={() => setIsAuthModalOpen(true)}
                   size="xl"
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl px-8"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl px-8 w-full sm:w-auto"
                 >
                   <Zap className="w-5 h-5 mr-2" />
                   Tester QuickExpo
                 </Button>
-                <a href="#how-it-works">
+                <a href="#how-it-works" className="w-full sm:w-auto">
                   <Button
                     variant="outline"
                     size="xl"
@@ -382,12 +382,12 @@ export default function Home() {
               Rejoignez les utilisateurs qui ont choisi QuickExpo pour leurs
               travaux académiques et professionnels.
             </p>
-            <div className="flex justify-center w-full">
+            <div className="flex justify-center w-full px-4 sm:px-0">
               <Button
                 onClick={() => setIsAuthModalOpen(true)}
                 size="xl"
                 variant="secondary"
-                className="rounded-xl px-10 py-6 text-lg shadow-2xl hover:shadow-white/10 w-full md:w-auto"
+                className="rounded-xl px-10 py-6 text-lg shadow-2xl hover:shadow-white/10 w-full sm:w-auto"
               >
                 Créer mon premier document
                 <ArrowRight className="ml-2 w-5 h-5" />
