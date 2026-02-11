@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   PageLayout,
   staggerContainer,
@@ -19,8 +19,9 @@ import {
   Eye,
   Layers,
   Briefcase,
+  ArrowUp,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { Link } from "react-router-dom";
 
@@ -78,6 +79,24 @@ const steps = [
 
 export default function Home() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <PageLayout>
@@ -87,11 +106,32 @@ export default function Home() {
       />
 
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden">
+      <section className="relative min-h-[90vh] flex items-center overflow-hidden perspective-1000">
         {/* Abstract Background */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-0 right-0 w-2/3 h-full bg-gradient-to-l from-muted/50 to-transparent opacity-60 skew-x-12 transform origin-top-right" />
           <div className="absolute bottom-0 left-0 w-1/3 h-2/3 bg-gradient-to-r from-muted/30 to-transparent opacity-40 skew-x-12 transform origin-bottom-left" />
+        </div>
+
+        {/* 3D Rotating Square Animation */}
+        <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none opacity-20">
+          <motion.div
+            animate={{
+              rotateX: [0, 360],
+              rotateY: [0, 360],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            className="w-[500px] h-[500px] border-[1px] border-primary/30 rounded-[3rem] relative"
+            style={{ transformStyle: "preserve-3d" }}
+          >
+            {/* Inner styling for depth perception */}
+            <div className="absolute inset-4 border border-secondary/20 rounded-[2.5rem]" />
+            <div className="absolute inset-12 border border-primary/10 rounded-[2rem]" />
+          </motion.div>
         </div>
 
         <div className="container mx-auto px-4 relative z-10 pt-20">
@@ -123,7 +163,7 @@ export default function Home() {
               {/* Subheading */}
               <motion.p
                 variants={fadeInUp}
-                className="text-lg md:text-xl text-muted-foreground max-w-xl mb-10 leading-relaxed"
+                className="text-lg md:text-xl text-muted-foreground max-w-xl mb-10 leading-relaxed mx-auto"
               >
                 QuickExpo vous aide à structurer, rédiger et mettre en forme vos
                 exposés et documents techniques. Gagnez du temps sur la forme
@@ -175,28 +215,6 @@ export default function Home() {
                 ))}
               </motion.div>
             </div>
-
-            
-            {/* <motion.div
-              variants={fadeInUp}
-              className="relative hidden lg:flex items-center justify-center p-10"
-            >
-              <div className="relative w-full max-w-lg aspect-square flex items-center justify-center">
-               
-                <div className="absolute inset-0 border border-secondary/10 rounded-full animate-[spin_60s_linear_infinite]" />
-                <div className="absolute inset-8 border border-secondary/20 rounded-full animate-[spin_40s_linear_infinite_reverse]" />
-                <div className="absolute inset-16 border border-secondary/5 rounded-full" />
-
-                
-                <div className="relative z-10 p-12 glass-card rounded-3xl bg-white/50 backdrop-blur-sm border-white/20 shadow-2xl">
-                  <img
-                    src="/logo-primary.svg"
-                    alt="QuickExpo Logo"
-                    className="w-48 h-48 object-contain"
-                  />
-                </div>
-              </div>
-            </motion.div> */}
           </motion.div>
         </div>
       </section>
@@ -376,6 +394,24 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.5, y: 20 }}
+            className="fixed bottom-8 right-8 z-50"
+          >
+            <Button
+              onClick={scrollToTop}
+              size="icon"
+              className="rounded-full w-12 h-12 bg-primary/90 hover:bg-primary shadow-lg backdrop-blur-sm border border-white/10"
+            >
+              <ArrowUp className="w-5 h-5 text-primary-foreground" />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </PageLayout>
   );
 }
