@@ -119,7 +119,7 @@ PENDING → PAID → GENERATING → COMPLETED | FAILED
 
 
 > ⚠️ Le frontend React est développé dans une branche séparée :  
-> **`develop/front`**
+> **`develop-frontend`**
 
 ---
 
