@@ -87,7 +87,7 @@ export default function Home() {
       />
 
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-background">
+      <section className="relative min-h-[90vh] flex items-center overflow-hidden">
         {/* Abstract Background */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-0 right-0 w-2/3 h-full bg-gradient-to-l from-muted/50 to-transparent opacity-60 skew-x-12 transform origin-top-right" />
@@ -99,9 +99,9 @@ export default function Home() {
             variants={staggerContainer}
             initial="initial"
             animate="animate"
-            className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
+            className="flex justify-center items-center"
           >
-            <div className="text-left">
+            <div className="text-center">
               {/* Badge */}
               <motion.div
                 variants={fadeInUp}
@@ -133,7 +133,7 @@ export default function Home() {
               {/* CTA Buttons */}
               <motion.div
                 variants={fadeInUp}
-                className="flex flex-col sm:flex-row gap-4"
+                className="flex justify-center item-center flex-col sm:flex-row gap-4"
               >
                 <Button
                   onClick={() => setIsAuthModalOpen(true)}
@@ -158,12 +158,12 @@ export default function Home() {
               {/* Targets */}
               <motion.div
                 variants={fadeInUp}
-                className="flex flex-wrap gap-4 mt-16 border-t border-border pt-8"
+                className="flex justify-center items-center flex-wrap gap-4 mt-8 mb-5 border-t border-border pt-8"
               >
                 {targets.map((t, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-lg border border-border/50"
+                    className="flex items-center justify-center gap-2 bg-muted/50 px-3 py-1.5 rounded-lg border border-border/50"
                   >
                     <span className="text-lg">
                       <t.icon className="w-5 h-5" />
@@ -176,18 +176,18 @@ export default function Home() {
               </motion.div>
             </div>
 
-            {/* Right Side Visual */}
-            <motion.div
+            
+            {/* <motion.div
               variants={fadeInUp}
               className="relative hidden lg:flex items-center justify-center p-10"
             >
               <div className="relative w-full max-w-lg aspect-square flex items-center justify-center">
-                {/* Decorative circles */}
+               
                 <div className="absolute inset-0 border border-secondary/10 rounded-full animate-[spin_60s_linear_infinite]" />
                 <div className="absolute inset-8 border border-secondary/20 rounded-full animate-[spin_40s_linear_infinite_reverse]" />
                 <div className="absolute inset-16 border border-secondary/5 rounded-full" />
 
-                {/* Logo Image */}
+                
                 <div className="relative z-10 p-12 glass-card rounded-3xl bg-white/50 backdrop-blur-sm border-white/20 shadow-2xl">
                   <img
                     src="/logo-primary.svg"
@@ -196,7 +196,7 @@ export default function Home() {
                   />
                 </div>
               </div>
-            </motion.div>
+            </motion.div> */}
           </motion.div>
         </div>
       </section>
