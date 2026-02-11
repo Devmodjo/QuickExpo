@@ -113,8 +113,8 @@ export default function Home() {
           <div className="absolute bottom-0 left-0 w-1/3 h-2/3 bg-gradient-to-r from-muted/30 to-transparent opacity-40 skew-x-12 transform origin-bottom-left" />
         </div>
 
-        {/* 3D Rotating Square Animation */}
-        <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none opacity-20">
+        {/* 3D Rotating Square Animation - High Visibility */}
+        <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none opacity-50 dark:opacity-40">
           <motion.div
             animate={{
               rotateX: [0, 360],
@@ -125,12 +125,12 @@ export default function Home() {
               repeat: Infinity,
               ease: "linear",
             }}
-            className="w-[500px] h-[500px] border-[1px] border-primary/30 rounded-[3rem] relative"
+            className="w-[500px] h-[500px] border-[2px] border-primary/60 rounded-[3rem] relative shadow-2xl shadow-primary/10"
             style={{ transformStyle: "preserve-3d" }}
           >
             {/* Inner styling for depth perception */}
-            <div className="absolute inset-4 border border-secondary/20 rounded-[2.5rem]" />
-            <div className="absolute inset-12 border border-primary/10 rounded-[2rem]" />
+            <div className="absolute inset-4 border-[2px] border-secondary/50 rounded-[2.5rem]" />
+            <div className="absolute inset-12 border-[2px] border-primary/40 rounded-[2rem]" />
           </motion.div>
         </div>
 
@@ -368,12 +368,12 @@ export default function Home() {
       {/* CTA Section */}
       <section className="py-24 bg-primary text-primary-foreground relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-        <div className="container mx-auto px-4 relative z-10 text-center">
+        <div className="container mx-auto px-4 relative z-10 flex flex-col items-center text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="max-w-3xl mx-auto"
+            className="max-w-3xl mx-auto flex flex-col items-center"
           >
             <h2 className="text-3xl md:text-5xl font-bold font-display mb-8">
               Prêt à gagner du temps ?
@@ -382,15 +382,17 @@ export default function Home() {
               Rejoignez les utilisateurs qui ont choisi QuickExpo pour leurs
               travaux académiques et professionnels.
             </p>
-            <Button
-              onClick={() => setIsAuthModalOpen(true)}
-              size="xl"
-              variant="secondary"
-              className="rounded-xl px-10 py-6 text-lg shadow-2xl hover:shadow-white/10"
-            >
-              Créer mon premier document
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
+            <div className="flex justify-center w-full">
+              <Button
+                onClick={() => setIsAuthModalOpen(true)}
+                size="xl"
+                variant="secondary"
+                className="rounded-xl px-10 py-6 text-lg shadow-2xl hover:shadow-white/10 w-full md:w-auto"
+              >
+                Créer mon premier document
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </div>
           </motion.div>
         </div>
       </section>

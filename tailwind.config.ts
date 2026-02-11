@@ -64,8 +64,8 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
-        display: ["Plus Jakarta Sans", "Inter", "system-ui", "sans-serif"],
+        sans: ["Outfit", "Inter", "system-ui", "sans-serif"],
+        display: ["Outfit", "Plus Jakarta Sans", "Inter", "system-ui", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {
