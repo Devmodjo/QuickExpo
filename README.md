@@ -151,7 +151,7 @@ spring:
 api:
   ai:
     hugging-face-key: ${HF_API_KEY}
-    hugging-face-model: mistralai/Mistral-7B-Instruct-v0.2
+    hugging-face-model: Qwen/Qwen2.5-7B-Instruct
 ```
 ## 🚀 Lancer le projet en local
 
