@@ -45,9 +45,9 @@ public class AuthController {
             String email = oAuthUser.getAttribute("email");
             String fullName = oAuthUser.getAttribute("name");
             String pictureUrl = oAuthUser.getAttribute("picture");
-            String provider = "google"; // ou oAuthUser.getAttribute("provider") si dispo
+            String provider = "google";
 
-            // Charge ton User depuis la DB (recommandé)
+            // Charge ton User depuis la DB
             User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new UsernameNotFoundException("User not found for email: " + email));
 
@@ -59,7 +59,7 @@ public class AuthController {
             return ResponseEntity.ok(dto);
 
         } else if (principal instanceof User user) {
-            // Si un jour tu changes pour UserPrincipal
+            // si UserPrincipal
             UserResponseDTO dto = new UserResponseDTO(
                     user.getId(), user.getEmail(), user.getFullName(),
                     user.getPictureUrl(), user.getProvider(), user.getCreatedAt()
