@@ -26,7 +26,7 @@ public class AiGenerationServiceImpl implements AiGenerationService {
     @Override
     public String generatePreview(Order order) {
 
-        String prompt = PromptBuilder.build(order.getTheme(), order.getSubject(), order.getLevel(), order.getPages(), order.getDescription());
+        String prompt = PromptBuilder.build(order.getTheme(), order.getSubject(), order.getLevel(), order.getPages(), order.getDescription(), order.getLang(), null);
 
         log.info("AI PREVIEW generated for Order {}", order.getId());
         return huggingFaceClient.generateText(prompt);

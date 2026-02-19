@@ -50,7 +50,9 @@ public class OrderServiceImpl implements OrderService {
                 orderCreateRequestDTO.subject(),
                 orderCreateRequestDTO.level(),
                 orderCreateRequestDTO.pages(),
-                null
+                null,
+                orderCreateRequestDTO.lang()
+
         );
 
         order.setUser(user);

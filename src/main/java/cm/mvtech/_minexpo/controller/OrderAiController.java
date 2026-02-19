@@ -33,7 +33,7 @@ public class OrderAiController {
         if (!authentication.isAuthenticated()) {
             throw new AccessDeniedException("utilisateur non authentifier");
         }
-        Order order = new Order(orderCreateRequestDTO.theme(), orderCreateRequestDTO.subject(), orderCreateRequestDTO.level(), orderCreateRequestDTO.pages(), orderCreateRequestDTO.description());
+        Order order = new Order(orderCreateRequestDTO.theme(), orderCreateRequestDTO.subject(), orderCreateRequestDTO.level(), orderCreateRequestDTO.pages(), orderCreateRequestDTO.description(), orderCreateRequestDTO.lang());
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ApiResponse(true, aiGenerationService.generatePreview(order)));
 
     }

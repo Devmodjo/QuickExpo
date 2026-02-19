@@ -2,67 +2,72 @@ package cm.mvtech._minexpo.ai;
 
 public class PromptBuilder {
 
-    public static String build(String theme, String subject, String level, int page, String description) {
+    public static String build(
+            String theme,
+            String subject,
+            String level,
+            int page,
+            String description,
+            String lang,
+            String optionalPlan   // null ou vide si pas de plan
+    ) {
+        String planText = optionalPlan != null && !optionalPlan.trim().isEmpty()
+                ? optionalPlan
+                : "AUCUN PLAN FOURNI – utilise la structure ci-dessous";
+
         return """
-    # RÔLE ET EXPERTISE
-    Tu es un professeur universitaire chevronné avec 15+ années d'expérience dans l'enseignement supérieur et la rédaction académique. Tu maîtrises parfaitement les conventions universitaires, la méthodologie de recherche, et l'art de structurer des exposés didactiques de haut niveau.
+    Tu es un générateur automatique d'exposés universitaires de haut niveau. Tu ne donnes aucun avis personnel, aucun commentaire, aucun "je pense que", "à mon avis" ou reformulation extérieure. Tu produis uniquement l'exposé demandé.
+    tu donne juste du markdown adapter au fomat A4 et a MS word
+    RÈGLES IMPORTANTES :
+    - Écris TOUT l'exposé (titres, contenu, tout) exclusivement en %s. Pas un mot dans une autre langue.
+    - L'exposé doit être complet : toutes les parties et sous-parties doivent être terminées. Ne jamais couper avec "à suivre", "manque de place" ou autre.
+    - Vise environ %d pages (format Word A4 standard ~300–350 mots/page). Si le contenu devient trop long, condense légèrement les parties secondaires pour respecter approximativement le volume sans jamais supprimer d'éléments essentiels.
+    - Si un plan est fourni (%s), suis-le exactement (titres, ordre, nombre de parties). Sinon, utilise la structure ci-dessous.
 
-    # MISSION PRINCIPALE
-    Produire un exposé académique complet, rigoureux et professionnel qui répond aux standards universitaires les plus élevés.
+    PARAMÈTRES :
+    - Sujet principal      : %s
+    - Thème spécifique     : %s
+    - Niveau académique    : %s
+    - Volume cible         : environ %d pages
+    - Description / cadrage: %s
+    - Langue               : %s
+    - Plan fourni          : %s
 
-    # SPÉCIFICATIONS DU CONTENU
-    ## Paramètres de l'exposé
-    - **Sujet principal** : %s
-    - **Thème spécifique** : %s
-    - **Niveau académique** : %s
-    - **Volume cible** : %d pages
-    - **Description / cadrage** : %s
+    STRUCTURE À SUIVRE (seulement si pas de plan imposé) :
+    # Titre de l'exposé (pertinent et en %s)
 
-    ## Structure obligatoire et détaillée
+    ## 1. Introduction
+    - Accroche
+    - Problématique
+    - Contextualisation
+    - Objectifs
+    - Annonce du plan
 
-    ### 1. INTRODUCTION (15-20%% du contenu)
-    Doit impérativement contenir :
-    - **Accroche** : Phrase d'ouverture captivante qui contextualise le sujet
-    - **Problématique** : Question centrale ou enjeu majeur explicitement formulé
-    - **Contextualisation** : Arrière-plan théorique et/ou historique pertinent
-    - **Objectifs** : Énoncé clair de ce que l'exposé vise à démontrer/explorer
-    - **Justification du plan** : Explication de la logique structurante choisie
-    - **Annonce du plan** : Présentation explicite de toutes les parties du développement (minimum 3, pouvant aller jusqu'à 6-8 selon la complexité et le volume)
+    ## 2. Développement
+    - 3 à 7 parties logiques selon le sujet et le volume
+    - Sous-titres clairs
+    - Argumentation rigoureuse et transitions naturelles
 
-    ### 2. DÉVELOPPEMENT (65-70%% du contenu)
-    #### Nombre de parties adaptatif
-    Le développement doit comporter **un nombre de parties proportionnel au volume et à la complexité** :
-    - **Exposé court (3-5 pages)** : 3 parties minimum
-    - **Exposé moyen (6-10 pages)** : 4-5 parties recommandées
-    - **Exposé long (11-20 pages)** : 5-7 parties recommandées
-    - **Exposé très long (20+ pages)** : 6-8 parties ou plus selon la complexité
+    ## 3. Conclusion
+    - Synthèse
+    - Réponse à la problématique
+    - Perspectives factuelles
 
-    ... (le reste de la structure reste identique, je ne le répète pas ici pour concision)
-
-    # INSTRUCTION D'ANALYSE PRÉALABLE
-    Avant de générer l'exposé, détermine le nombre optimal de parties en fonction de :
-    - La complexité et l'étendue du sujet « %s »
-    - Le volume cible de %d pages
-    - La richesse du thème « %s »
-    - Le niveau académique « %s »
-
-    **Règle générale** : Prévoir environ 1 partie substantielle pour chaque tranche de 2-3 pages, avec un minimum de 3 parties.
-
-    # INSTRUCTION FINALE
-    Génère maintenant l'exposé complet en respectant TOUTES les directives ci-dessus.
-    **Commence par indiquer brièvement** (en 1-2 phrases) le nombre de parties que tu as choisi et pourquoi ce choix est optimal pour ce sujet.
-    **Puis génère l'exposé complet** en commençant directement par le titre de l'exposé suivi de l'introduction, sans autre métacommentaire.
+    Commence directement par le titre "# ...", puis l'introduction, sans aucun texte avant ou après.
+    Génère l'exposé complet maintenant, en %s.
     """.formatted(
-                subject,          // %s → Sujet principal
-                theme,            // %s → Thème spécifique
-                level,            // %s → Niveau académique
-                page,             // %d → Volume cible
-                description,      // %s → description
-
-                subject,          // %s → sujet (dans analyse préalable)
-                page,             // %d → pages (dans analyse préalable)
-                theme,            // %s → thème (dans analyse préalable)
-                level             // %s → niveau (dans analyse préalable)
+                lang,               // langue
+                page,               // pages
+                planText,           // plan
+                subject,            // sujet principal
+                theme,              // thème
+                level,              // niveau
+                page,               // pages (répété)
+                description,        // description
+                lang,               // langue
+                planText,           // plan répété
+                lang,               // titre en langue
+                lang                // final langue
         );
     }
 }

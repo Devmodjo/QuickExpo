@@ -36,7 +36,7 @@ public class HuggingFaceClient {
         String url = "https://router.huggingface.co/v1/chat/completions";
 
         // Si provider nécessaire forcer :deepseek ou :novita
-        // String fullModel = model + ":novita";   // décommente si besoin
+        // String fullModel = model + ":novita";
 
         Map<String, Object> message = Map.of(
                 "role", "user",
@@ -46,7 +46,7 @@ public class HuggingFaceClient {
         Map<String, Object> body = Map.of(
                 "model", model,
                 "messages", List.of(message),
-                "max_tokens", 1500,
+                "max_tokens", 8192,
                 "temperature", 0.75,
                 "top_p", 0.9,
                 "stream", false
