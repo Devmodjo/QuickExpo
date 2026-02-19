@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -29,9 +30,11 @@ public class SecurityConfig {
                                 "/webhook/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
-                                "/v3/api-docs", "/oauth2/**", "/login/**"
+                                "/v3/api-docs/**", "/oauth2/**", "/login/**"
                         ).permitAll()
-                        .requestMatchers("/api/auth/me", "/logout").authenticated()
+                        .requestMatchers(
+                                "/api/auth/me",
+                                "/logout", "/api/orders/**").authenticated()
                 )
                 .oauth2Login(oauth -> oauth
                         .successHandler(successHandler)
@@ -46,5 +49,11 @@ public class SecurityConfig {
                         })));
 
         return http.build();
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring()
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/webjars/**");
     }
 }

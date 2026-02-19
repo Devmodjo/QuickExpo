@@ -35,7 +35,9 @@ public class HuggingFaceClient {
     public String generateText(String prompt) {
         String url = "https://router.huggingface.co/v1/chat/completions";
 
-        // Body au format OpenAI
+        // Si provider nécessaire forcer :deepseek ou :novita
+        // String fullModel = model + ":novita";   // décommente si besoin
+
         Map<String, Object> message = Map.of(
                 "role", "user",
                 "content", prompt
@@ -44,7 +46,7 @@ public class HuggingFaceClient {
         Map<String, Object> body = Map.of(
                 "model", model,
                 "messages", List.of(message),
-                "max_tokens", 1500,             // Augmente si exposés sont longs
+                "max_tokens", 1500,
                 "temperature", 0.75,
                 "top_p", 0.9,
                 "stream", false
@@ -62,7 +64,7 @@ public class HuggingFaceClient {
                 .onStatus(HttpStatusCode::is5xxServerError, response ->
                         Mono.error(new RuntimeException("HF Server Error: " + response.statusCode())))
                 .bodyToMono(String.class)
-                .map(this::extractContentFromJson)  // Parsing simple
+                .map(this::extractContentFromJson)
                 .block();
     }
 
