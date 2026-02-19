@@ -2,7 +2,7 @@
 
 ## 🎯 Objectif du projet
 
-**QuickExpo** est une plateforme SaaS qui permet aux élèves, étudiants et enseignants de générer rapidement des exposés et rapports académiques structurés et professionnels (5 minutes ou plus), à partir de paramètres simples.
+**QuickExpo** est une plateforme SaaS qui permet aux élèves, étudiants et enseignants de générer rapidement des exposés et rapports académiques structurés et professionnels, à partir de paramètres simples.
 
 Le système repose sur :
 - une **API backend sécurisée**
@@ -33,7 +33,7 @@ Le système repose sur :
 graph TD
     A[Frontend React<br/>Vercel] -->|REST API| B[Backend Spring Boot<br/>Render]
     B -->|JPA/Hibernate| C[PostgreSQL<br/>Neon.tech]
-    B -->|API Call| D[HuggingFace<br/>Qwen AI]
+    B -->|API Call| D[HuggingFace<br/>DeepSeek AI]
 ```
 ---
 
@@ -55,7 +55,7 @@ graph TD
 
 ### IA
 - **HuggingFace Inference API**
-- **Modèle : Mistral**
+- **Modèle : DeepSeek**
 - Génération de texte académique structuré
 
 ### Authentification
@@ -151,7 +151,7 @@ spring:
 api:
   ai:
     hugging-face-key: ${HF_API_KEY}
-    hugging-face-model: Qwen/Qwen2.5-7B-Instruct
+    hugging-face-model: deepseek-ai/DeepSeek-V3.2
 ```
 ## 🚀 Lancer le projet en local
 
