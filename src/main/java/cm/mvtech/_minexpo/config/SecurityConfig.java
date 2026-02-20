@@ -30,6 +30,8 @@ public class SecurityConfig {
                                 "/webhook/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
+                                "/login/oauth2/code/github",
+                                "/login/oauth2/code/github/**",
                                 "/v3/api-docs/**", "/oauth2/**", "/login/**"
                         ).permitAll()
                         .requestMatchers(
