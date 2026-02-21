@@ -4,6 +4,7 @@ package cm.mvtech._minexpo.controller;
 import cm.mvtech._minexpo.beans.Order;
 import cm.mvtech._minexpo.enums.OrderStatus;
 import cm.mvtech._minexpo.model.dto.ApiResponse;
+import cm.mvtech._minexpo.model.dto.GeneratePlanDTO;
 import cm.mvtech._minexpo.model.dto.OrderCreateRequestDTO;
 import cm.mvtech._minexpo.services.AiGenerationService;
 import cm.mvtech._minexpo.services.OrderService;
@@ -16,7 +17,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
 
 @RestController
 @RequestMapping("api/orders")
@@ -25,6 +25,15 @@ import java.util.UUID;
 public class OrderAiController {
 
     private final AiGenerationService aiGenerationService;
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/ai/plan")
+    public ResponseEntity<ApiResponse> plan(@RequestBody GeneratePlanDTO generatePlanDTO, Authentication authentication) {
+        if (!authentication.isAuthenticated()) {
+            throw new AccessDeniedException("utilisateur non authentifier");
+        }
+        return  ResponseEntity.status(HttpStatus.ACCEPTED).body(new ApiResponse(true, aiGenerationService.generatePlan(generatePlanDTO)));
+    }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/preview")

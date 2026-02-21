@@ -87,7 +87,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.addCookie(jwtCookie);
 
         // Redirection finale vers le frontend
-        String frontendSuccessUrl = "http://localhost:8080/api/auth/me";
+        String frontendSuccessUrl = "http://localhost:8080/api/auth/me";  //"http://localhost:5173/console.generate";
         getRedirectStrategy().sendRedirect(request, response, frontendSuccessUrl);
     }
 }
