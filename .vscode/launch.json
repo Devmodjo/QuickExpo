@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-Application<5minexpo>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "cm.mvtech._minexpo.Application",
+            "projectName": "5minexpo",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
