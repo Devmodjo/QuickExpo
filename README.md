@@ -282,7 +282,7 @@ Please ensure that your code follows the project's coding standards and includes
 
 # License
 
-This project is licensed under the MIT License.
+This project is licensed under the GPL License.
 
 ---
 
