@@ -3,10 +3,12 @@ package cm.mvtech._minexpo.config;
 
 import cm.mvtech._minexpo.auth.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
+import jakarta.servlet.http.Cookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -28,14 +30,32 @@ public class SecurityConfig {
                                 "/webhook/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
-                                "/v3/api-docs"
+                                "/login/oauth2/code/github",
+                                "/login/oauth2/code/github/**",
+                                "/v3/api-docs/**", "/oauth2/**", "/login/**"
                         ).permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(
+                                "/api/auth/me", "/api/plan/**",
+                                "/logout", "/error", "/api/orders/**").authenticated()
                 )
                 .oauth2Login(oauth -> oauth
                         .successHandler(successHandler)
-                );
+                ).logout( logout -> logout.logoutUrl("/logout")
+                        .addLogoutHandler(((request, response, authentication) -> {
+                            // suppression du cookie
+                            Cookie cookie = new Cookie("auth_token", null);
+                            cookie.setPath("/");
+                            cookie.setMaxAge(0);
+                            cookie.setHttpOnly(true);
+                            response.addCookie(cookie);
+                        })));
 
         return http.build();
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring()
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/webjars/**");
     }
 }

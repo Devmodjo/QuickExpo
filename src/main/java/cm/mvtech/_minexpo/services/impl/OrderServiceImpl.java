@@ -49,7 +49,10 @@ public class OrderServiceImpl implements OrderService {
                 orderCreateRequestDTO.theme(),
                 orderCreateRequestDTO.subject(),
                 orderCreateRequestDTO.level(),
-                orderCreateRequestDTO.pages()
+                orderCreateRequestDTO.pages(),
+                null,
+                orderCreateRequestDTO.lang()
+
         );
 
         order.setUser(user);
@@ -100,6 +103,7 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(OrderStatus.FAILED);
         orderRepository.save(order);
     }
+
 
     /**
      * recuperation de tous les order en fonction

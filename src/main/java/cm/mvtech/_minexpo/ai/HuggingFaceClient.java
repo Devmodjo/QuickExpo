@@ -2,11 +2,16 @@ package cm.mvtech._minexpo.ai;
 
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,23 +33,54 @@ public class HuggingFaceClient {
     private String model;
 
     public String generateText(String prompt) {
-        String url = "https://api-inference.huggingface.co/models/" + model;
+        String url = "https://router.huggingface.co/v1/chat/completions";
+
+        // Si provider nécessaire forcer :deepseek ou :novita
+        // String fullModel = model + ":novita";
+
+        Map<String, Object> message = Map.of(
+                "role", "user",
+                "content", prompt
+        );
 
         Map<String, Object> body = Map.of(
-                "inputs", prompt,
-                "parameters", Map.of(
-                        "max_new_tokens", 1200,
-                        "temperature", 0.7
-                )
+                "model", model,
+                "messages", List.of(message),
+                "max_tokens", 8192,
+                "temperature", 0.75,
+                "top_p", 0.9,
+                "stream", false
         );
 
         return webClient.post()
                 .uri(url)
                 .header("Authorization", "Bearer " + apiKey)
+                .header("Content-Type", "application/json")
                 .bodyValue(body)
                 .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, response ->
+                        response.bodyToMono(String.class)
+                                .map(err -> new RuntimeException("HF Error: " + response.statusCode() + " - " + err)))
+                .onStatus(HttpStatusCode::is5xxServerError, response ->
+                        Mono.error(new RuntimeException("HF Server Error: " + response.statusCode())))
                 .bodyToMono(String.class)
+                .map(this::extractContentFromJson)
                 .block();
     }
 
+    private String extractContentFromJson(String rawResponse) {
+        try {
+            JsonNode json = new ObjectMapper().readTree(rawResponse);
+            JsonNode content = json
+                    .path("choices").get(0)
+                    .path("message").path("content");
+
+            if (content.isMissingNode() || content.isNull()) {
+                throw new RuntimeException("Pas de contenu dans la réponse HF : " + rawResponse);
+            }
+            return content.asText().trim();
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur parsing réponse HF", e);
+        }
+    }
 }

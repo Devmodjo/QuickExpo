@@ -41,6 +41,8 @@ public class Order {
     @Column(nullable = false)
     private OrderStatus status;
 
+    private String description;
+    private String lang;
     @Column(name = "payment_reference")
     private String paymentReference;
 
@@ -61,13 +63,15 @@ public class Order {
     @JsonIgnore
     private User user;
 
-    public Order(String theme, String subject, String level, int pages) {
+    public Order(String theme, String subject, String level, int pages, String description, String lang) {
         this.id = UUID.randomUUID();
         this.theme = theme;
         this.subject = subject;
         this.level = level;
         this.pages = pages;
         this.status = OrderStatus.PENDING;
+        this.description = description;
+        this.lang = lang;
         this.createdAt = LocalDateTime.now();
     }
 

@@ -1,16 +1,48 @@
 spring:
+  # import du fichier qui contient les var d'env
+  config:
+    import: optional:file:.env[.properties]
   application:
-    name: 5minexpo
+    name: QuickExpo
 
   datasource:
-    url: jdbc:postgresql://postgres:ZMysbFJ0G3K7uTQl@db.euamxtrvloebtwqwdhfo.supabase.co:5432/postgres
-    username: postgres
-    password: ZMysbFJ0G3K7uTQl
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
-      data-source-properties:
-        ssl: true
-        sslmode: require
+      connection-timeout: 60000
+      maximum-pool-size: 5
+      idle-timeout: 300000
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+            redirect-uri: "{baseUrl}/login/oauth2/code/github"
+            scope:
+              - user:email
+              - read:user
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+          github:
+            authorization-uri: https://github.com/login/oauth/authorize
+            token-uri: https://github.com/login/oauth/access_token
+            user-info-uri: https://api.github.com/user
+            user-name-attribute: id
   jpa:
     hibernate:
       ddl-auto: update
@@ -19,7 +51,41 @@ spring:
       hibernate:
         format-sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
 
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operationsSorter: alpha
+    tagsSorter: alpha
+    filter: true
+    tryItOutEnabled: true
+    displayRequestDuration: true
+
+  packages-to-scan: cm.mvtech._minexpo.controller
+  paths-to-match: /api/**, /auth/**
+
+  default-produces-media-type: application/json
+  default-consumes-media-type: application/json
+
+api:
+  ai:
+    hugging-face-key: ${HUGGINGFACE_KEY}
+    hugging-face-model: deepseek-ai/DeepSeek-V3.2
+# jwt key
+jwt:
+  secret: 067d1fa7de5fb95b09e25321164057a413384f52e64baed01bafced5d6229f193fa7fff2b21ff7b42dbc86b0a9bb52351e1cdc75827919f59b083a3e2c99181c
+  expiration-min: 86400000
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springdoc: DEBUG
+    org.springframework.web: DEBUG
 server:
-  port: 8585
-  
+  port: 8080
