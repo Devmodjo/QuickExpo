@@ -77,6 +77,8 @@ api:
   ai:
     hugging-face-key: ${HUGGINGFACE_KEY}
     hugging-face-model: deepseek-ai/DeepSeek-V3.2
+    groq-key: ${GROQ_KEY_3}
+    groq-model: ${GROQ_MODEL}
 # jwt key
 jwt:
   secret: 067d1fa7de5fb95b09e25321164057a413384f52e64baed01bafced5d6229f193fa7fff2b21ff7b42dbc86b0a9bb52351e1cdc75827919f59b083a3e2c99181c
