@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>cm.mvtech</groupId>
-	<artifactId>5minexpo</artifactId>
+	<artifactId>quickexpo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>5minexpo</name>
 	<description>saas generation d\&apos;exposé scolaire</description>
@@ -47,6 +47,15 @@
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
             <version>0.12.6</version> <!-- ou dernière version -->
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>

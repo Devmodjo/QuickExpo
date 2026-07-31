@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/plan")
 @RequiredArgsConstructor
-@Tag(name="PLAN EXPOSE GENERATION", description = "api de génération et de validation de plan d'exposé")
+@Tag(name="PLAN EXPOSE GENERATION", description = "api de génération et de validation de plan d'exposé (DEBUG API)")
 public class PlanController {
 
     private final PlanService planService;

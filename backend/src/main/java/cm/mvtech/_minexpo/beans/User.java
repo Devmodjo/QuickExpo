@@ -37,8 +37,8 @@ public class User {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Order> orders = new ArrayList<>();
+    private List<Plan> plans = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Plan> plans = new ArrayList<>();
+    private List<ProjectSession> projectSessions = new ArrayList<>();
 }

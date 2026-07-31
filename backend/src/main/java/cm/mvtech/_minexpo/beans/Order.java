@@ -19,30 +19,13 @@ import java.util.UUID;
 public class Order {
 
     @Id
-    @Column(nullable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    @Column(nullable = false)
-    private String theme;
-
-    @Column(nullable = false)
-    private String subject;
-
-    @Column(nullable = false)
-    private String level;
-
-    @Column(nullable = false)
-    private int pages;
-
-    @Column(name = "word_count")
-    private int wordCount;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus status;
 
-    private String description;
-    private String lang;
     @Column(name = "payment_reference")
     private String paymentReference;
 
@@ -59,20 +42,14 @@ public class Order {
     private LocalDateTime paidAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "users_id", nullable = false)
+    @JoinColumn(name = "project_session_id", nullable = false)
     @JsonIgnore
-    private User user;
+    private ProjectSession projectSession;
 
-    public Order(String theme, String subject, String level, int pages, String description, String lang) {
-        this.id = UUID.randomUUID();
-        this.theme = theme;
-        this.subject = subject;
-        this.level = level;
-        this.pages = pages;
-        this.status = OrderStatus.PENDING;
-        this.description = description;
-        this.lang = lang;
-        this.createdAt = LocalDateTime.now();
-    }
+    @ManyToOne
+    @JoinColumn(name = "generated_content_id", nullable = false)
+    @JsonIgnore
+    private GeneratedContent generatedContent;
+
 
 }
