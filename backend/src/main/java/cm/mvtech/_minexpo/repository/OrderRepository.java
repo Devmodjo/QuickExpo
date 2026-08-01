@@ -13,7 +13,9 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
 
     Optional<Order> findByDownloadToken(String downloadToken);
 
-    List<Order> findByUserOrderByCreatedAtDesc(User user);
+    //List<Order> findByPlan_ProjectSession_UserOrderByCreatedAtDesc(User user);
 
-    Order findByIdAndUser(UUID id, User user);
+//    List<Order> findByUserOrderByCreatedAtDesc(User user);
+//
+//    Order findByIdAndUser(UUID id, User user);
 }

@@ -31,8 +31,6 @@ public class PlanServiceImpl implements PlanService {
         String resultPrompt = huggingFaceClient.generateText(prompt);
 
         planRepository.save(new Plan(
-                generatePlanDTO.subject(),
-                generatePlanDTO.topics(),
                 resultPrompt,
                 PlanStatus.GENERATED
         ));

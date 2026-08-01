@@ -1,0 +1,2 @@
+ALTER TABLE plan DROP COLUMN subject;
+ALTER TABLE plan DROP COLUMN topics;
