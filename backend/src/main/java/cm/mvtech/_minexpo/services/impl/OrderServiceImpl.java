@@ -45,17 +45,7 @@ public class OrderServiceImpl implements OrderService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("User not found"));
 
-        Order order = new Order(
-                orderCreateRequestDTO.theme(),
-                orderCreateRequestDTO.subject(),
-                orderCreateRequestDTO.level(),
-                orderCreateRequestDTO.pages(),
-                null,
-                orderCreateRequestDTO.lang()
-
-        );
-
-        order.setUser(user);
+        Order order = new Order();
         Order saved = orderRepository.save(order);
         return orderMapper.toResponse(saved);
     }
