@@ -5,5 +5,6 @@ public enum ProjectStatus {
     PLAN_VALIDATED,
     PREVIEW_GENERATED,
     GENERATING,
-    COMPLETED
+    COMPLETED,
+    PROJECT_CREATED
 }

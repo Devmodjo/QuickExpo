@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.minidev.json.annotate.JsonIgnore;
+import org.hibernate.annotations.CurrentTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -59,4 +60,16 @@ public class ProjectSession {
     @OneToMany(mappedBy = "projectSession")
     private List<Order> order = new ArrayList<>();
 
+    public ProjectSession(String theme, String subject, String description, String academicLevel, String language, Integer expectedPages, ProjectStatus projectStatus, LocalDateTime createdAt, LocalDateTime updatedAt, User user) {
+        this.theme = theme;
+        this.subject = subject;
+        this.description = description;
+        this.academicLevel = academicLevel;
+        this.language = language;
+        this.expectedPages = expectedPages;
+        this.projectStatus = projectStatus;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.user = user;
+    }
 }
