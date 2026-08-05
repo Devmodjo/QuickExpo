@@ -14,7 +14,7 @@ spring:
       connection-timeout: 60000
       maximum-pool-size: 5
       idle-timeout: 300000
-
+  debug: true
   security:
     oauth2:
       client:
@@ -92,5 +92,6 @@ logging:
     org.springframework.security: DEBUG
     org.springdoc: DEBUG
     org.springframework.web: DEBUG
+    org.flywaydb: TRACE
 server:
   port: 8080

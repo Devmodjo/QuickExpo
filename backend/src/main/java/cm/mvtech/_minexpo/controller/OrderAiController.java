@@ -1,14 +1,11 @@
 package cm.mvtech._minexpo.controller;
 
-
-import cm.mvtech._minexpo.beans.Order;
-import cm.mvtech._minexpo.enums.OrderStatus;
 import cm.mvtech._minexpo.model.dto.ApiResponse;
 import cm.mvtech._minexpo.model.dto.GeneratePlanDTO;
 import cm.mvtech._minexpo.model.dto.OrderCreateRequestDTO;
-import cm.mvtech._minexpo.model.mapper.OrderMapper;
 import cm.mvtech._minexpo.services.AiGenerationService;
-import cm.mvtech._minexpo.services.OrderService;
+
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

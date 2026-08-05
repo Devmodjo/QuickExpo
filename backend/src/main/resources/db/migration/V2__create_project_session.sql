@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS project_session (
     CONSTRAINT fk_project_session_user
         FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE SET NULL,
     CONSTRAINT chk_project_session_status CHECK (project_status IN
-        ('PLAN_GENERATED', 'PLAN_VALIDATED', 'PREVIEW_GENERATED', 'GENERATING', 'COMPLETED'))
+        ('PROJECT_CREATED', 'PLAN_GENERATED', 'PLAN_VALIDATED', 'PREVIEW_GENERATED', 'GENERATING', 'COMPLETED'))
 );
 
 CREATE INDEX IF NOT EXISTS idx_project_session_user_id ON project_session (user_id);

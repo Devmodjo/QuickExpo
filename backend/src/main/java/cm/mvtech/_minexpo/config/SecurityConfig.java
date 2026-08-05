@@ -36,7 +36,8 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers(
                                 "/api/auth/me", "/api/plan/**",
-                                "/logout", "/error", "/api/orders/**").authenticated()
+                                "/logout", "/error", "/api/orders/**",
+                                "/api/project-session/**").authenticated()
                 )
                 .oauth2Login(oauth -> oauth
                         .successHandler(successHandler)

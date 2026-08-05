@@ -22,12 +22,6 @@ public class Plan {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column
-    private String subject;
-
-    @Column
-    private String topics;
-
     @Column(columnDefinition = "TEXT")
     private String content;
 
@@ -48,9 +42,7 @@ public class Plan {
     @OneToMany(mappedBy = "plan", fetch = FetchType.LAZY)
     private List<GeneratedContent> generatedContents = new ArrayList<>();
 
-    public Plan(String subject, String topics, String content, PlanStatus planStatus) {
-        this.subject = subject;
-        this.topics = topics;
+    public Plan(String content, PlanStatus planStatus) {
         this.content = content;
         this.planStatus = planStatus;
     }
