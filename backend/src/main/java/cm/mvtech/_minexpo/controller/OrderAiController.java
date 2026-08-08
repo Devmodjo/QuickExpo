@@ -24,14 +24,14 @@ public class OrderAiController {
 
     private final AiGenerationService aiGenerationService;
 
-    @PreAuthorize("isAuthenticated()")
-    @PostMapping("/ai/plan")
-    public ResponseEntity<ApiResponse> plan(@RequestBody GeneratePlanDTO generatePlanDTO, Authentication authentication) {
-        if (!authentication.isAuthenticated()) {
-            throw new AccessDeniedException("utilisateur non authentifier");
-        }
-        return  ResponseEntity.status(HttpStatus.ACCEPTED).body(new ApiResponse(true, aiGenerationService.generatePlan(generatePlanDTO)));
-    }
+//    @PreAuthorize("isAuthenticated()")
+//    @PostMapping("/ai/plan")
+//    public ResponseEntity<ApiResponse> plan(@RequestBody GeneratePlanDTO generatePlanDTO, Authentication authentication) {
+//        if (!authentication.isAuthenticated()) {
+//            throw new AccessDeniedException("utilisateur non authentifier");
+//        }
+//        return  ResponseEntity.status(HttpStatus.ACCEPTED).body(new ApiResponse(true, aiGenerationService.generatePlan(generatePlanDTO)));
+//    }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/preview")

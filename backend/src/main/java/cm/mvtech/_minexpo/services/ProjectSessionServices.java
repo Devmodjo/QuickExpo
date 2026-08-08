@@ -2,6 +2,7 @@ package cm.mvtech._minexpo.services;
 
 
 import cm.mvtech._minexpo.model.dto.ApiResponse;
+import cm.mvtech._minexpo.model.dto.ProjectSessionID;
 import cm.mvtech._minexpo.model.dto.ProjectSessionRequest;
 import cm.mvtech._minexpo.model.dto.ProjectSessionResponse;
 
@@ -10,7 +11,7 @@ import java.util.UUID;
 
 public interface ProjectSessionServices {
 
-    void initializeProjectSession(UUID userId, ProjectSessionRequest projectSessionRequest);
+    ProjectSessionID initializeProjectSession(UUID userId, ProjectSessionRequest projectSessionRequest);
 
     Set<ProjectSessionResponse> retreiveAllProjectSession();
 
