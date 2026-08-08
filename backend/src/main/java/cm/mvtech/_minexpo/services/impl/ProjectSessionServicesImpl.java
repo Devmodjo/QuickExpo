@@ -5,6 +5,7 @@ import cm.mvtech._minexpo.beans.User;
 import cm.mvtech._minexpo.enums.ProjectStatus;
 import cm.mvtech._minexpo.exception.BadRequestException;
 import cm.mvtech._minexpo.exception.ResourceNotFoundException;
+import cm.mvtech._minexpo.model.dto.ProjectSessionID;
 import cm.mvtech._minexpo.model.dto.ProjectSessionRequest;
 import cm.mvtech._minexpo.model.dto.ProjectSessionResponse;
 import cm.mvtech._minexpo.repository.ProjectSessionRepository;
@@ -30,7 +31,7 @@ public class ProjectSessionServicesImpl implements ProjectSessionServices {
     private final UserRepository userRepository;
 
     @Override
-    public void initializeProjectSession(UUID userId, ProjectSessionRequest projectSessionRequest) {
+    public ProjectSessionID initializeProjectSession(UUID userId, ProjectSessionRequest projectSessionRequest) {
         if (projectSessionRequest == null) {
             throw new BadRequestException("Renseignez tous les élements de votre projet");
         }
@@ -52,6 +53,8 @@ public class ProjectSessionServicesImpl implements ProjectSessionServices {
 
         projectSessionRepository.save(projectSession);
         log.info("Nouvelle session de projet créée pour l'utilisateur {}", user.getId());
+
+        return new ProjectSessionID(true, "Project created successfully", projectSession.getId());
     }
 
     @Override

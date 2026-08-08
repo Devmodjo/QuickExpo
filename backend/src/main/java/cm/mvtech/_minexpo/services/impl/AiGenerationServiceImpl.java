@@ -33,11 +33,11 @@ public class AiGenerationServiceImpl implements AiGenerationService {
         return huggingFaceClient.generateText(prompt);
     }
 
-    @Override
-    public String generatePlan(GeneratePlanDTO generatePlanDTO) {
-
-        String prompt = PromptBuilder.buildPlan(generatePlanDTO.subject(), generatePlanDTO.topics(), generatePlanDTO.level(), generatePlanDTO.lang());
-
-        return huggingFaceClient.generateText(prompt);
-    }
+//    @Override
+//    public String generatePlan(GeneratePlanDTO generatePlanDTO) {
+//
+//        String prompt = PromptBuilder.buildPlan(generatePlanDTO.subject(), generatePlanDTO.topics(), generatePlanDTO.level(), generatePlanDTO.lang());
+//
+//        return huggingFaceClient.generateText(prompt);
+//    }
 }

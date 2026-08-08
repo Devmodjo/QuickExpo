@@ -1,5 +1,6 @@
 package cm.mvtech._minexpo.controller;
 
+import cm.mvtech._minexpo.model.dto.ProjectSessionID;
 import cm.mvtech._minexpo.model.dto.ProjectSessionRequest;
 import cm.mvtech._minexpo.model.dto.ProjectSessionResponse;
 import cm.mvtech._minexpo.services.ProjectSessionServices;
@@ -39,12 +40,11 @@ public class ProjectSessionController {
             @ApiResponse(responseCode = "400", description = "Requête invalide ou incomplète", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "404", description = "Utilisateur introuvable", content = @Content(schema = @Schema(hidden = true)))
     })
-    public ResponseEntity<cm.mvtech._minexpo.model.dto.ApiResponse> initializeProjectSession(
+    public ResponseEntity<ProjectSessionID> initializeProjectSession(
             @Valid @RequestBody ProjectSessionRequest projectSessionRequest,
             @RequestParam UUID userId
     ) {
-        projectSessionServices.initializeProjectSession(userId,projectSessionRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new cm.mvtech._minexpo.model.dto.ApiResponse(true, "Project created Successfully"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(projectSessionServices.initializeProjectSession(userId,projectSessionRequest));
     }
 
     @GetMapping

@@ -30,9 +30,9 @@ public class Plan {
 
     private Boolean validated;
 
-    @ManyToOne
-    @JsonIgnore
-    private User user;
+//    @ManyToOne
+//    @JsonIgnore
+//    private User user;
 
     @ManyToOne
     @JsonIgnore
@@ -42,9 +42,10 @@ public class Plan {
     @OneToMany(mappedBy = "plan", fetch = FetchType.LAZY)
     private List<GeneratedContent> generatedContents = new ArrayList<>();
 
-    public Plan(String content, PlanStatus planStatus) {
+    public Plan(String content, PlanStatus planStatus, Boolean validated, ProjectSession projectSession) {
         this.content = content;
         this.planStatus = planStatus;
+        this.validated = validated;
+        this.projectSession = projectSession;
     }
-
 }

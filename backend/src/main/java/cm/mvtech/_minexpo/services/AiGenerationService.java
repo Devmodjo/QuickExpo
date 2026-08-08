@@ -8,5 +8,5 @@ public interface AiGenerationService {
 
     String generatePreview(OrderCreateRequestDTO orderCreateRequestDTO);
 
-    String generatePlan(GeneratePlanDTO generatePlanDTO);
+    // String generatePlan(GeneratePlanDTO generatePlanDTO);
 }
