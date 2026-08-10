@@ -1,3 +1,204 @@
-/* You can add global styles to this file, and also import other style files */
-
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
+
+/**
+ * QuickExpo Design System - High-Tech Modern EdTech Showcase (Gamma.app Inspired)
+ * Built with CSS Variables for seamless light/dark mode transitions and high visual polish.
+ */
+
+@layer base {
+  :root {
+    /* Horizon EdTech - Light Mode Palette */
+    --background: 220 25% 97%;       /* Crisp modern off-white background */
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Primary - Electric Slate / Deep Indigo */
+    --primary: 231 68% 18%;         /* #0f1743 */
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary - Emerald/Cyan Vibrant EdTech Accent */
+    --secondary: 215 90% 48%;       /* #1e6bf2 */
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 220 14% 93%;
+    --muted-foreground: 220 10% 42%;
+
+    --accent: 162 84% 39%;          /* Emerald green #10b981 for success & trust */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 88%;
+    --input: 220 13% 88%;
+    --ring: 215 90% 48%;
+
+    --radius: 0.75rem;
+
+    --gradient-start: 231 68% 18%;
+    --gradient-end: 215 90% 48%;
+    --glow-primary: 231 68% 18%;
+    --glow-accent: 215 90% 48%;
+    --glass-bg: 255 255 255 / 0.75;
+    --glass-border: 220 13% 88% / 0.6;
+  }
+
+  .dark {
+    /* Horizon EdTech - Dark Mode Palette */
+    --background: 224 40% 6%;       /* #090d16 */
+    --foreground: 210 40% 98%;
+
+    --card: 224 35% 10%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 224 35% 10%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 215 100% 60%;        /* Vibrant Azure Blue in dark mode */
+    --primary-foreground: 224 40% 6%;
+
+    --secondary: 162 84% 45%;       /* Vivid Teal accent */
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 224 25% 15%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 270 91% 65%;          /* Royal violet accent */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 224 25% 18%;
+    --input: 224 25% 18%;
+    --ring: 215 100% 60%;
+
+    --gradient-start: 215 100% 60%;
+    --gradient-end: 270 91% 65%;
+    --glow-primary: 215 100% 60%;
+    --glow-accent: 162 84% 45%;
+    --glass-bg: 15 23 42 / 0.65;
+    --glass-border: 255 255 255 / 0.12;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+}
+
+/* Glassmorphism & UI Component Utility Classes */
+.glass-card {
+  background: hsl(var(--card) / 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.07), 0 10px 15px -5px rgba(0, 0, 0, 0.04);
+}
+
+.dark .glass-card {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.4);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-badge {
+  background: linear-gradient(135deg, rgba(30, 107, 242, 0.1), rgba(16, 185, 129, 0.1));
+  border: 1px solid rgba(30, 107, 242, 0.25);
+}
+
+.glow-primary {
+  box-shadow: 0 0 25px hsl(var(--glow-primary) / 0.25), 0 0 50px hsl(var(--glow-primary) / 0.1);
+}
+
+.glow-accent {
+  box-shadow: 0 0 25px hsl(var(--glow-accent) / 0.25), 0 0 50px hsl(var(--glow-accent) / 0.1);
+}
+
+/* Keyframes & Animations */
+@keyframes spin-3d {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  }
+  50% {
+    transform: rotateX(180deg) rotateY(90deg) rotateZ(180deg);
+  }
+  100% {
+    transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
+  }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.03); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-spin-3d {
+  animation: spin-3d 30s linear infinite;
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 4s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
