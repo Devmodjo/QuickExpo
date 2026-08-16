@@ -1,0 +1,2 @@
+ALTER TABLE generated_content
+    ADD COLUMN validated BOOLEAN  NOT NULL DEFAULT FALSE;

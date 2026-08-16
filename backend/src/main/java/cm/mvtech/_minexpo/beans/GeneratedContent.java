@@ -31,6 +31,9 @@ public class GeneratedContent {
     @Column(columnDefinition = "TEXT")
     private String markdownContent;
 
+    @Column(nullable = false)
+    private Boolean validated = false;
+
     @ManyToOne
     @JoinColumn(name = "plan_id")
     @JsonIgnore
@@ -44,4 +47,10 @@ public class GeneratedContent {
 
     @OneToMany(mappedBy = "generatedContent", fetch = FetchType.LAZY)
     private List<GeneratedDocument> generatedDocuments = new ArrayList<>();
+
+    public GeneratedContent(String title, String markdownContent, Plan plan) {
+        this.title = title;
+        this.markdownContent = markdownContent;
+        this.plan = plan;
+    }
 }
