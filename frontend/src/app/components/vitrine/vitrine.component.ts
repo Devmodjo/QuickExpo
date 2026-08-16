@@ -48,16 +48,16 @@ import { SeoService } from '../../services/seo.service';
         <div id="how-it-works">
           <app-how-it-works></app-how-it-works>
         </div>
-
+ 
         <div id="about">
           <app-vision></app-vision>
         </div>
-
+ 
         <div id="pricing">
           <app-cta (openAuth)="isAuthModalOpen = true"></app-cta>
         </div>
       </main>
-
+  
       <!-- Footer -->
       <app-footer></app-footer>
 
