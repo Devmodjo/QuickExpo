@@ -1,14 +1,15 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IconComponent, IconName } from '../icon/icon.component';
+import { IconComponent } from '../icon/icon.component';
 
-interface StepItem {
+interface Step {
+  id: number;
   number: string;
   title: string;
-  desc: string;
-  icon: IconName;
-  highlight: string;
-  previewSnippet: string;
+  description: string;
+  previewTitle: string;
+  previewDesc: string;
+  previewTag: string;
 }
 
 @Component({
@@ -16,72 +17,110 @@ interface StepItem {
   standalone: true,
   imports: [CommonModule, IconComponent],
   template: `
-    <section id="how-it-works" class="py-20 lg:py-28 bg-muted/40 relative overflow-hidden">
-      <!-- Background accent glow -->
-      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-secondary/10 blur-[130px] rounded-full pointer-events-none"></div>
-
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <section id="how-it-works" class="py-12 sm:py-16 bg-muted/30 relative overflow-hidden">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         
-        <!-- Section Header -->
-        <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-secondary/10 border border-secondary/20 text-secondary text-xs font-bold uppercase tracking-wider">
-            <app-icon name="zap" [size]="14"></app-icon>
-            <span>Processus Révolutoinnaire</span>
-          </div>
-          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-display text-foreground tracking-tight">
-            Comment ça <span class="bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent">marche ?</span>
+        <!-- Header from Mockup -->
+        <div class="reveal-up mb-10 text-left max-w-2xl">
+          <h2 class="text-3xl sm:text-5xl font-extrabold font-display text-foreground tracking-tight">
+            Un processus simple <br />
+            <span class="text-muted-foreground font-normal">et efficace.</span>
           </h2>
-          <p class="text-base sm:text-lg text-muted-foreground leading-relaxed">
-            Un parcours simple et méthodique en 3 étapes guidées pour créer des exposés, mémoires et fiches de synthèse de niveau académique.
-          </p>
         </div>
 
-        <!-- 3-Step Cards Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
-          <div
-            *ngFor="let step of steps; let i = index"
-            class="group relative flex flex-col h-full bg-card rounded-2xl p-8 border border-border/70 shadow-sm hover:shadow-xl hover:border-secondary/40 transition-all duration-300 hover:-translate-y-1"
-          >
-            <!-- Step Number Badge -->
-            <div class="flex items-center justify-between mb-6">
-              <span class="text-4xl font-extrabold font-display text-secondary/30 group-hover:text-secondary transition-colors">
+          <!-- Left Column: 4 Interactive Steps Cards (Flying in from Left) -->
+          <div class="reveal-left delay-100 lg:col-span-6 space-y-4">
+            <div
+              *ngFor="let step of steps"
+              (click)="activeStep = step.id"
+              class="cursor-pointer p-6 rounded-2xl border transition-all duration-300 flex items-start gap-5 group hover-lift"
+              [ngClass]="
+                activeStep === step.id
+                  ? 'bg-card border-[#00D084] shadow-md scale-[1.01]'
+                  : 'bg-card/50 border-border/60 hover:bg-card hover:border-border'
+              "
+            >
+              <!-- Step Number Badge -->
+              <span
+                class="text-2xl font-black font-display tracking-tight transition-colors"
+                [ngClass]="activeStep === step.id ? 'text-[#00D084]' : 'text-muted-foreground/50'"
+              >
                 {{ step.number }}
               </span>
-              <div class="w-12 h-12 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center group-hover:bg-secondary group-hover:text-white transition-all duration-300 shadow-sm">
-                <app-icon [name]="step.icon" [size]="24"></app-icon>
+
+              <div class="space-y-1">
+                <h3
+                  class="text-lg font-bold font-display transition-colors"
+                  [ngClass]="activeStep === step.id ? 'text-foreground' : 'text-foreground/70'"
+                >
+                  {{ step.title }}
+                </h3>
+                <p class="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  {{ step.description }}
+                </p>
               </div>
             </div>
+          </div>
 
-            <!-- Content -->
-            <h3 class="text-xl font-bold font-display text-foreground mb-3 group-hover:text-secondary transition-colors">
-              {{ step.title }}
-            </h3>
-            <p class="text-muted-foreground text-sm leading-relaxed mb-6 flex-1">
-              {{ step.desc }}
-            </p>
+          <!-- Right Column: Interactive UI Preview Box (Flying in from Right) -->
+          <div class="reveal-right delay-200 lg:col-span-6">
+            <div class="bg-card rounded-3xl p-6 sm:p-8 border border-border/80 shadow-2xl relative overflow-hidden hover-lift">
 
-            <!-- Preview Snippet Box -->
-            <div class="bg-muted/60 rounded-xl p-3.5 border border-border/50 text-xs font-mono text-muted-foreground flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0"></span>
-              <span class="truncate">{{ step.previewSnippet }}</span>
-            </div>
+              
+              <!-- Mock Header Bar -->
+              <div class="flex items-center justify-between pb-6 border-b border-border/50 mb-6">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-[#00D084]/20 text-[#00D084] flex items-center justify-center font-bold">
+                    <app-icon name="sparkles" [size]="18"></app-icon>
+                  </div>
+                  <div>
+                    <div class="text-xs font-bold text-foreground">Aperçu QuickExpo Studio</div>
+                    <div class="text-[11px] text-[#00D084] font-semibold">Étape {{ activeStep }} / 4</div>
+                  </div>
+                </div>
 
-            <!-- Bottom highlight pill -->
-            <div class="mt-4 pt-4 border-t border-border/40 flex items-center justify-between text-xs font-semibold text-secondary">
-              <span>{{ step.highlight }}</span>
-              <app-icon name="arrow-right" [size]="14" className="transform group-hover:translate-x-1 transition-transform"></app-icon>
+                <span class="text-[11px] font-bold px-3 py-1 rounded-full bg-[#00D084]/15 text-[#00D084]">
+                  {{ steps[activeStep - 1].previewTag }}
+                </span>
+              </div>
+
+              <!-- Dynamic Card Mockup View based on activeStep -->
+              <div class="bg-muted/50 rounded-2xl p-6 space-y-4 border border-border/40">
+                <div class="flex items-center gap-2 text-xs font-mono text-muted-foreground">
+                  <span class="w-2 h-2 rounded-full bg-[#00D084]"></span>
+                  <span>Modèle IA : GPT-4o EdTech Engine</span>
+                </div>
+
+                <h4 class="text-xl font-bold font-display text-foreground">
+                  {{ steps[activeStep - 1].previewTitle }}
+                </h4>
+
+                <p class="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  {{ steps[activeStep - 1].previewDesc }}
+                </p>
+
+                <!-- Interactive Visual Graphic Pill Bar -->
+                <div class="pt-4 grid grid-cols-3 gap-3 text-center">
+                  <div class="bg-card p-3 rounded-xl border border-border/60">
+                    <div class="text-xs font-bold text-[#00D084]">100%</div>
+                    <div class="text-[10px] text-muted-foreground">Rigueur LMD</div>
+                  </div>
+                  <div class="bg-card p-3 rounded-xl border border-border/60">
+                    <div class="text-xs font-bold text-[#00D084]">Instant</div>
+                    <div class="text-[10px] text-muted-foreground">Mise en page</div>
+                  </div>
+                  <div class="bg-card p-3 rounded-xl border border-border/60">
+                    <div class="text-xs font-bold text-[#00D084]">PDF / PPTX</div>
+                    <div class="text-[10px] text-muted-foreground">Formats</div>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
 
-        </div>
-
-        <!-- Bottom Banner Callout -->
-        <div class="mt-16 text-center">
-          <div class="inline-flex items-center gap-3 bg-card px-6 py-3 rounded-full border border-border/80 shadow-md text-sm font-semibold text-foreground">
-            <app-icon name="check-circle" [size]="18" className="text-emerald-500"></app-icon>
-            <span>Format conforme aux exigences des universités et grandes écoles (LMD & Supérieur)</span>
-          </div>
         </div>
 
       </div>
@@ -89,31 +128,46 @@ interface StepItem {
   `
 })
 export class HowItWorksComponent {
-  public steps: StepItem[] = [
+  public activeStep: number = 1;
+
+  public steps: Step[] = [
     {
+      id: 1,
       number: '01',
-      title: 'Décrivez votre sujet',
-      desc: 'Indiquez le titre de votre exposé, le domaine (Droit, Économie, Santé, IA, Lettres...) et votre niveau d\'études.',
-      icon: 'file-text',
-      highlight: 'Saisie ultra-rapide',
-      previewSnippet: 'Exemple : "Enjeux de la cyber-sécurité"'
+      title: 'Entrez votre sujet',
+      description: 'Saisissez la thématique de votre exposé et quelques mots-clés.',
+      previewTitle: 'Saisie du sujet & thématique',
+      previewDesc: 'Entrez un sujet complexe (ex: "Enjeux géopolitiques de la transition énergétique") et l\'IA initialise la recherche.',
+      previewTag: 'Recherche active'
     },
     {
+      id: 2,
       number: '02',
-      title: 'Validez la preview & le plan',
-      desc: 'L\'IA génère un plan détaillé (Introduction, Parties I & II, Conclusion). Vous validez ou ajustez chaque partie selon vos envies.',
-      icon: 'eye',
-      highlight: 'Contrôle méthodologique 100%',
-      previewSnippet: 'Plan validé avec 4 axes de recherche'
+      title: 'L\'IA analyse et structure',
+      description: 'Notre modèle génère un plan détaillé et rédige le contenu clé.',
+      previewTitle: 'Génération du plan académique',
+      previewDesc: 'Création instantanée d\'une introduction, problématique, plan en 3 parties et conclusion synthétique.',
+      previewTag: 'Analyse 100%'
     },
     {
+      id: 3,
       number: '03',
-      title: 'Obtenez votre document pro',
-      desc: 'Téléchargez immédiatement un document impeccablement rédigé, référencé et prêt pour vos soutenances ou remises.',
-      icon: 'check-circle',
-      highlight: 'Export PDF & Word instantané',
-      previewSnippet: 'Document prêt en 3 minutes chronos'
+      title: 'Personnalisez le design',
+      description: 'Ajustez les couleurs, polices et images en quelques clics.',
+      previewTitle: 'Édition & Mise en page',
+      previewDesc: 'Appliquez la charte graphique de votre université ou école avec des modèles modernes et élégants.',
+      previewTag: 'Design personnalisé'
     },
+    {
+      id: 4,
+      number: '04',
+      title: 'Exportez en un clic',
+      description: 'Téléchargez votre présentation finalisée au format désiré.',
+      previewTitle: 'Exportation prête à présenter',
+      previewDesc: 'Téléchargement direct au format PDF vectoriel, présentation PowerPoint PPTX ou partage direct par lien.',
+      previewTag: 'Export instantané'
+    }
   ];
 }
+
 

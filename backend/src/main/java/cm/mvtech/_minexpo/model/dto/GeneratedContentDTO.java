@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 
 import java.util.UUID;
 
-public record CreateContentDTO(
+public record GeneratedContentDTO(
 
         UUID id,
 
