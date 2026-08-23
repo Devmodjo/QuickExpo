@@ -33,13 +33,10 @@ public class GeneratedContentServiceImpl implements GeneratedContentService {
     private final GroqClient groqClient;
 
     @Override
-    public void createdContent(UUID planId) {
+    public void createdContent(UUID planId, UUID userId) {
 
-        Optional<Plan> findPlan = planRepository.findById(planId);
-        if (findPlan.isEmpty())
-            throw new ResourceNotFoundException("plan not found");
-
-        Plan plan = findPlan.get();
+        Plan plan = planRepository.findByIdAndProjectSession_User_Id(planId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("plan not found"));
 
         if (Boolean.FALSE.equals(plan.getValidated()))
             throw new IllegalArgumentException("please validate this plan");
@@ -64,14 +61,9 @@ public class GeneratedContentServiceImpl implements GeneratedContentService {
 
     @Override
     @Transactional
-    public void validatedContent(UUID contentId) {
+    public void validatedContent(UUID contentId, UUID userId) {
 
-        Optional<GeneratedContent> findContent = generatedContentRepository.findById(contentId);
-
-        if (findContent.isEmpty())
-            throw new ResourceNotFoundException("Content not found");
-
-        GeneratedContent content =  findContent.get();
+        GeneratedContent content = findContentOrThrow(contentId, userId);
 
         if (Boolean.FALSE.equals(content.getValidated())) {
             content.setValidated(true);
@@ -83,25 +75,21 @@ public class GeneratedContentServiceImpl implements GeneratedContentService {
 
     @Override
     @Transactional
-    public void deleteContent(UUID contentId) {
+    public void deleteContent(UUID contentId, UUID userId) {
 
-        Optional<GeneratedContent> findContent = generatedContentRepository.findById(contentId);
-
-        if (findContent.isEmpty())
-            throw new ResourceNotFoundException("Content not found");
-
-        generatedContentRepository.delete(findContent.get());
+        GeneratedContent content = findContentOrThrow(contentId, userId);
+        generatedContentRepository.delete(content);
 
     }
 
     @Override
     @Transactional
-    public void updatedContent(UUID contentId, GeneratedContentDTO generatedContentDTO) {
+    public void updatedContent(UUID contentId, GeneratedContentDTO generatedContentDTO, UUID userId) {
 
         if (generatedContentDTO == null)
             throw new IllegalArgumentException("Renseignez le contenu à mettre à jour");
 
-        GeneratedContent content = findContentOrThrow(contentId);
+        GeneratedContent content = findContentOrThrow(contentId, userId);
 
         content.setTitle(generatedContentDTO.title());
         content.setMarkdownContent(generatedContentDTO.markdownContent());
@@ -111,24 +99,25 @@ public class GeneratedContentServiceImpl implements GeneratedContentService {
     }
 
     @Override
-    public Set<GeneratedContentDTO> getContent() {
-        return generatedContentRepository.findAll()
+    public Set<GeneratedContentDTO> getContent(UUID userId) {
+        return generatedContentRepository.findAllByPlan_ProjectSession_User_Id(userId)
                 .stream()
                 .map(this::toDto)
                 .collect(Collectors.toSet());
     }
 
     @Override
-    public GeneratedContentDTO getContentById(UUID contentId) {
-        GeneratedContent content = findContentOrThrow(contentId);
+    public GeneratedContentDTO getContentById(UUID contentId, UUID userId) {
+        GeneratedContent content = findContentOrThrow(contentId, userId);
         return toDto(content);
     }
 
     /**
-     * Recherche un contenu généré par son identifiant, ou lève une exception si absent.
+     * Recherche un contenu généré par son identifiant, filtré par le propriétaire,
+     * ou lève une exception si absent ou n'appartenant pas à l'utilisateur.
      */
-    private GeneratedContent findContentOrThrow(UUID contentId) {
-        return generatedContentRepository.findById(contentId)
+    private GeneratedContent findContentOrThrow(UUID contentId, UUID userId) {
+        return generatedContentRepository.findByIdAndPlan_ProjectSession_User_Id(contentId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Content not found"));
     }
 

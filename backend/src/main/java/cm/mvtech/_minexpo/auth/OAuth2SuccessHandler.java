@@ -6,6 +6,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -25,6 +26,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    @Value("${api.url.frontend}")
+    private String frontendUrl;
 
     @Override
     public void onAuthenticationSuccess(
@@ -87,7 +90,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.addCookie(jwtCookie);
 
         // Redirection finale vers le frontend
-        String frontendSuccessUrl = "http://localhost:8080/api/auth/me";  //"http://localhost:5173/console.generate";
+        String frontendSuccessUrl = frontendUrl + "/dashboard";  //"http://localhost:5173/console.generate";
         getRedirectStrategy().sendRedirect(request, response, frontendSuccessUrl);
     }
 }

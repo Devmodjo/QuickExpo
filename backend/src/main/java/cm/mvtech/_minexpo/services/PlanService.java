@@ -11,15 +11,15 @@ public interface PlanService {
 
     PlanResponse createPlan(UUID projectSession);
 
-    Set<PlanResponse> getPlan();
+    Set<PlanResponse> getPlan(UUID userId);
 
-    PlanResponse getPlanById(UUID planId);
+    PlanResponse getPlanById(UUID planId, UUID userId);
 
-    void validatedPlan(UUID planId);
+    void validatedPlan(UUID planId, UUID userId);
 
-    void deletePlan(UUID planId);
+    void deletePlan(UUID planId, UUID userId);
 
-    void updatePlan(UUID planId, GeneratePlanDTO generatePlanDTO);
+    void updatePlan(UUID planId, GeneratePlanDTO generatePlanDTO, UUID userId);
 
 
 }

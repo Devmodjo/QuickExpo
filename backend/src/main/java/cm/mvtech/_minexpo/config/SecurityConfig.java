@@ -1,15 +1,18 @@
 package cm.mvtech._minexpo.config;
 
 
+import cm.mvtech._minexpo.auth.JwtAuthenticationFilter;
 import cm.mvtech._minexpo.auth.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.Cookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -17,6 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final OAuth2SuccessHandler successHandler;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain filterChain (HttpSecurity http) throws Exception {
@@ -42,11 +46,11 @@ public class SecurityConfig {
                                 "/api/project-session/**",
                                 "/api/generated-content/**").authenticated()
                 )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth -> oauth
                         .successHandler(successHandler)
                 ).logout( logout -> logout.logoutUrl("/logout")
                         .addLogoutHandler(((request, response, authentication) -> {
-                            // suppression du cookie
                             Cookie cookie = new Cookie("auth_token", null);
                             cookie.setPath("/");
                             cookie.setMaxAge(0);

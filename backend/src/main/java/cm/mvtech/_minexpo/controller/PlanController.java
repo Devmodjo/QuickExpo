@@ -1,6 +1,8 @@
 package cm.mvtech._minexpo.controller;
 
 
+import cm.mvtech._minexpo.auth.CurrentUserProvider;
+import cm.mvtech._minexpo.beans.User;
 import cm.mvtech._minexpo.model.dto.GeneratePlanDTO;
 import cm.mvtech._minexpo.model.dto.PlanResponse;
 import cm.mvtech._minexpo.services.PlanService;
@@ -16,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -30,6 +33,7 @@ import java.util.UUID;
 public class PlanController {
 
     private final PlanService planService;
+    private final CurrentUserProvider currentUserProvider;
 
     @PostMapping
     @Operation(
@@ -56,8 +60,9 @@ public class PlanController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Liste des plans récupérée avec succès")
     })
-    public ResponseEntity<Set<PlanResponse>> getPlan() {
-        Set<PlanResponse> plans = planService.getPlan();
+    public ResponseEntity<Set<PlanResponse>> getPlan(Authentication authentication) {
+        User currentUser = currentUserProvider.getCurrentUser(authentication);
+        Set<PlanResponse> plans = planService.getPlan(currentUser.getId());
         return ResponseEntity.ok(plans);
     }
 
@@ -72,9 +77,10 @@ public class PlanController {
     })
     public ResponseEntity<PlanResponse> getPlanById(
             @Parameter(description = "Identifiant UUID du plan", required = true)
-            @PathVariable UUID planId
+            @PathVariable UUID planId, Authentication authentication
     ) {
-        PlanResponse plan = planService.getPlanById(planId);
+        User currentUser = currentUserProvider.getCurrentUser(authentication);
+        PlanResponse plan = planService.getPlanById(planId, currentUser.getId());
         return ResponseEntity.ok(plan);
     }
 
@@ -91,9 +97,11 @@ public class PlanController {
     public ResponseEntity<cm.mvtech._minexpo.model.dto.ApiResponse> updatePlan(
             @Parameter(description = "Identifiant UUID du plan", required = true)
             @PathVariable UUID planId,
-            @Valid @RequestBody GeneratePlanDTO generatePlanDTO
+            @Valid @RequestBody GeneratePlanDTO generatePlanDTO,
+            Authentication authentication
     ) {
-        planService.updatePlan(planId, generatePlanDTO);
+        User currentUser = currentUserProvider.getCurrentUser(authentication);
+        planService.updatePlan(planId, generatePlanDTO, currentUser.getId());
         return ResponseEntity.ok().body(new cm.mvtech._minexpo.model.dto.ApiResponse(true, "plan udated successfully"));
     }
 
@@ -108,9 +116,11 @@ public class PlanController {
     })
     public ResponseEntity<cm.mvtech._minexpo.model.dto.ApiResponse> validatedPlan(
             @Parameter(description = "Identifiant UUID du plan", required = true)
-            @PathVariable UUID planId
+            @PathVariable UUID planId,
+            Authentication authentication
     ) {
-        planService.validatedPlan(planId);
+        User currentUser = currentUserProvider.getCurrentUser(authentication);
+        planService.validatedPlan(planId, currentUser.getId());
         return ResponseEntity.ok().body(new cm.mvtech._minexpo.model.dto.ApiResponse(true, "plan validated successfully"));
     }
 
@@ -125,9 +135,10 @@ public class PlanController {
     })
     public ResponseEntity<cm.mvtech._minexpo.model.dto.ApiResponse> deletePlan(
             @Parameter(description = "Identifiant UUID du plan", required = true)
-            @PathVariable UUID planId
+            @PathVariable UUID planId, Authentication authentication
     ) {
-        planService.deletePlan(planId);
+        User currentUser = currentUserProvider.getCurrentUser(authentication);
+        planService.deletePlan(planId, currentUser.getId());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new cm.mvtech._minexpo.model.dto.ApiResponse(true, "plan deleted successfully"));
     }
 }

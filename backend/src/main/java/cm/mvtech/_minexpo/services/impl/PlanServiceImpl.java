@@ -63,24 +63,24 @@ public class PlanServiceImpl implements PlanService {
     }
 
     @Override
-    public Set<PlanResponse> getPlan() {
-        return planRepository.findAll()
+    public Set<PlanResponse> getPlan(UUID userId) {
+        return planRepository.findAllByProjectSession_User_Id(userId)
                 .stream()
                 .map(this::toDto)
                 .collect(Collectors.toSet());
     }
 
     @Override
-    public PlanResponse getPlanById(UUID planId) {
-        Plan plan = findPlanOrThrow(planId);
+    public PlanResponse getPlanById(UUID planId, UUID userId) {
+        Plan plan = findPlanOrThrow(planId, userId);
         return toDto(plan);
     }
 
     @Transactional
     @Override
-    public void validatedPlan(UUID planId) {
+    public void validatedPlan(UUID planId, UUID userId) {
 
-        Optional<Plan> findPlan = planRepository.findById(planId);
+        Optional<Plan> findPlan = planRepository.findByIdAndProjectSession_User_Id(planId, userId);
 
         if (findPlan.isEmpty()) {
             throw new ResourceNotFoundException("plan not found");
@@ -97,9 +97,9 @@ public class PlanServiceImpl implements PlanService {
 
     @Transactional
     @Override
-    public void deletePlan(UUID planId) {
+    public void deletePlan(UUID planId, UUID userId) {
 
-        Optional<Plan> findPlan = planRepository.findById(planId);
+        Optional<Plan> findPlan = planRepository.findByIdAndProjectSession_User_Id(planId, userId);
 
         if (findPlan.isEmpty()) {
             throw new ResourceNotFoundException("plan not found");
@@ -110,13 +110,13 @@ public class PlanServiceImpl implements PlanService {
 
     @Transactional
     @Override
-    public void updatePlan(UUID planId, GeneratePlanDTO generatePlanDTO) {
+    public void updatePlan(UUID planId, GeneratePlanDTO generatePlanDTO, UUID userId) {
 
         if (generatePlanDTO == null) {
             throw new ResourceNotFoundException("Renseignez le contenu du plan à mettre à jour");
         }
 
-        Plan plan = findPlanOrThrow(planId);
+        Plan plan = findPlanOrThrow(planId, userId);
         plan.setContent(generatePlanDTO.content());
 
         planRepository.save(plan);
@@ -126,8 +126,8 @@ public class PlanServiceImpl implements PlanService {
     /**
      * Recherche un plan par son identifiant, ou lève une exception si absent.
      */
-    private Plan findPlanOrThrow(UUID planId) {
-        return planRepository.findById(planId)
+    private Plan findPlanOrThrow(UUID planId, UUID userId) {
+        return planRepository.findByIdAndProjectSession_User_Id(planId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("plan not found"));
     }
 

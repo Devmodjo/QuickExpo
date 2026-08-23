@@ -58,26 +58,26 @@ public class ProjectSessionServicesImpl implements ProjectSessionServices {
     }
 
     @Override
-    public Set<ProjectSessionResponse> retreiveAllProjectSession() {
-        return projectSessionRepository.findAll()
+    public Set<ProjectSessionResponse> retreiveAllProjectSession(UUID userId) {
+        return projectSessionRepository.findAllByUser_Id(userId)
                 .stream()
                 .map(this::toResponse)
                 .collect(Collectors.toSet());
     }
 
     @Override
-    public ProjectSessionResponse retreiveProjectSessionById(UUID projectId) {
-        ProjectSession projectSession = findProjectSessionOrThrow(projectId);
+    public ProjectSessionResponse retreiveProjectSessionById(UUID projectId, UUID userId) {
+        ProjectSession projectSession = findProjectSessionOrThrow(projectId, userId);
         return toResponse(projectSession);
     }
 
     @Override
-    public ProjectSessionResponse updateProjectSession(UUID projectId, ProjectSessionRequest projectSessionRequest) {
+    public ProjectSessionResponse updateProjectSession(UUID projectId, ProjectSessionRequest projectSessionRequest, UUID userId) {
         if (projectSessionRequest == null) {
             throw new BadRequestException("Renseignez tous les élements de votre projet");
         }
 
-        ProjectSession projectSession = findProjectSessionOrThrow(projectId);
+        ProjectSession projectSession = findProjectSessionOrThrow(projectId, userId);
 
         projectSession.setTheme(projectSessionRequest.theme());
         projectSession.setSubject(projectSessionRequest.subject());
@@ -94,8 +94,8 @@ public class ProjectSessionServicesImpl implements ProjectSessionServices {
     }
 
     @Override
-    public boolean deleteProjectSession(UUID projectId) {
-        ProjectSession projectSession = findProjectSessionOrThrow(projectId);
+    public boolean deleteProjectSession(UUID projectId, UUID userId) {
+        ProjectSession projectSession = findProjectSessionOrThrow(projectId, userId);
         projectSessionRepository.delete(projectSession);
         log.info("Session de projet {} supprimée", projectId);
         return true;
@@ -104,8 +104,8 @@ public class ProjectSessionServicesImpl implements ProjectSessionServices {
     /**
      * Recherche une session de projet par son identifiant, ou lève une exception si absente.
      */
-    private ProjectSession findProjectSessionOrThrow(UUID projectId) {
-        return projectSessionRepository.findById(projectId)
+    private ProjectSession findProjectSessionOrThrow(UUID projectId, UUID userId) {
+        return projectSessionRepository.findByIdAndUser_Id(projectId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Session de projet introuvable"));
     }
 
