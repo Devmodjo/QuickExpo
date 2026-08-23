@@ -1,5 +1,7 @@
 package cm.mvtech._minexpo.controller;
 
+import cm.mvtech._minexpo.auth.CurrentUserProvider;
+import cm.mvtech._minexpo.beans.User;
 import cm.mvtech._minexpo.model.dto.ProjectSessionID;
 import cm.mvtech._minexpo.model.dto.ProjectSessionRequest;
 import cm.mvtech._minexpo.model.dto.ProjectSessionResponse;
@@ -16,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -29,6 +32,7 @@ import java.util.UUID;
 public class ProjectSessionController {
 
     private final ProjectSessionServices projectSessionServices;
+    private final CurrentUserProvider currentUserProvider;
 
     @PostMapping
     @Operation(
@@ -54,9 +58,11 @@ public class ProjectSessionController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Liste des sessions de projet récupérée avec succès")
+
     })
-    public ResponseEntity<Set<ProjectSessionResponse>> retreiveAllProjectSession() {
-        Set<ProjectSessionResponse> sessions = projectSessionServices.retreiveAllProjectSession();
+    public ResponseEntity<Set<ProjectSessionResponse>> retreiveAllProjectSession(Authentication authentication) {
+        User currentUser = currentUserProvider.getCurrentUser(authentication);
+        Set<ProjectSessionResponse> sessions = projectSessionServices.retreiveAllProjectSession(currentUser.getId());
         return ResponseEntity.ok(sessions);
     }
 
@@ -71,9 +77,11 @@ public class ProjectSessionController {
     })
     public ResponseEntity<ProjectSessionResponse> retreiveProjectSessionById(
             @Parameter(description = "Identifiant UUID de la session de projet", required = true)
-            @PathVariable UUID projectId
+            @PathVariable UUID projectId,
+            Authentication authentication
     ) {
-        ProjectSessionResponse response = projectSessionServices.retreiveProjectSessionById(projectId);
+        User currentUser = currentUserProvider.getCurrentUser(authentication);
+        ProjectSessionResponse response = projectSessionServices.retreiveProjectSessionById(projectId, currentUser.getId());
         return ResponseEntity.ok(response);
     }
 
@@ -90,9 +98,11 @@ public class ProjectSessionController {
     public ResponseEntity<ProjectSessionResponse> updateProjectSession(
             @Parameter(description = "Identifiant UUID de la session de projet", required = true)
             @PathVariable UUID projectId,
-            @Valid @RequestBody ProjectSessionRequest projectSessionRequest
+            @Valid @RequestBody ProjectSessionRequest projectSessionRequest,
+            Authentication authentication
     ) {
-        ProjectSessionResponse response = projectSessionServices.updateProjectSession(projectId, projectSessionRequest);
+        User currentUser = currentUserProvider.getCurrentUser(authentication);
+        ProjectSessionResponse response = projectSessionServices.updateProjectSession(projectId, projectSessionRequest, currentUser.getId());
         return ResponseEntity.ok(response);
     }
 
@@ -107,9 +117,11 @@ public class ProjectSessionController {
     })
     public ResponseEntity<Void> deleteProjectSession(
             @Parameter(description = "Identifiant UUID de la session de projet", required = true)
-            @PathVariable UUID projectId
+            @PathVariable UUID projectId,
+            Authentication authentication
     ) {
-        boolean deleted = projectSessionServices.deleteProjectSession(projectId);
+        User currentUser = currentUserProvider.getCurrentUser(authentication);
+        boolean deleted = projectSessionServices.deleteProjectSession(projectId, currentUser.getId());
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 }

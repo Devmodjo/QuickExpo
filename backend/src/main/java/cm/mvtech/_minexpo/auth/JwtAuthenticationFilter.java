@@ -20,7 +20,6 @@ import java.util.Collections;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
@@ -53,7 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     }
                 }
             } catch (Exception ignored) {
-                // logger.warn("JWT invalide", e);
+                logger.warn("JWT invalide", ignored);
             }
         }
 

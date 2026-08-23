@@ -12,12 +12,12 @@ public interface ProjectSessionServices {
 
     ProjectSessionID initializeProjectSession(UUID userId, ProjectSessionRequest projectSessionRequest);
 
-    Set<ProjectSessionResponse> retreiveAllProjectSession();
+    Set<ProjectSessionResponse> retreiveAllProjectSession(UUID userId);
 
-    ProjectSessionResponse retreiveProjectSessionById(UUID projectId);
+    ProjectSessionResponse retreiveProjectSessionById(UUID projectId, UUID userId);
 
-    ProjectSessionResponse updateProjectSession(UUID projectId, ProjectSessionRequest projectSessionRequest);
+    ProjectSessionResponse updateProjectSession(UUID projectId, ProjectSessionRequest projectSessionRequest, UUID userId);
 
-    boolean deleteProjectSession(UUID projectId);
+    boolean deleteProjectSession(UUID projectId, UUID userId);
 
 }

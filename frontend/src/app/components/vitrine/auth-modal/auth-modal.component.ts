@@ -2,6 +2,8 @@ import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IconComponent } from '../icon/icon.component';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
+import { API_URL_AUTH_GITHUB, API_URL_AUTH_GOOGLE } from '../../../../../env';
 
 @Component({
   selector: 'app-auth-modal',
@@ -124,6 +126,7 @@ export class AuthModalComponent {
   @Output() closeModal = new EventEmitter<void>();
 
   private router = inject(Router);
+  private authService = inject(AuthService);
   public activeTab: 'login' | 'register' = 'login';
 
   public close(): void {
@@ -131,9 +134,15 @@ export class AuthModalComponent {
   }
 
   public handleSocialLogin(provider: string): void {
-    console.log(`Login with ${provider}`);
-    this.close();
-    this.router.navigate(['/members']);
+
+    if (provider == "google") {
+      this.authService.googleAuthService();
+    }
+
+    if (provider == "github") {
+      this.authService.githubAuthService();
+    }
+    
   }
 }
 
