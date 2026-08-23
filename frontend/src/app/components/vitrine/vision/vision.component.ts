@@ -13,7 +13,7 @@ interface Testimonial {
 @Component({
   selector: 'app-vision',
   standalone: true,
-  imports: [CommonModule, IconComponent],
+  imports: [CommonModule],
   template: `
     <section id="vision" class="py-12 sm:py-16 bg-muted/20 relative overflow-hidden">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
