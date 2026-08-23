@@ -1,0 +1,41 @@
+name: Backend CI
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "backend/**"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "backend/**"
+jobs:
+  test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout du code
+        uses: actions/checkout@V4
+        
+      - name: Installer Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Compiler le projet
+        working-directory: ./backend
+        run: mvn -B clean compile
+
+      - name: Lancement des Test unitaires
+        working-directory: ./backend
+        run: mvn -B test
+
+      - name: Publier le rapport de tests
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: Résultats des tests Maven
+          path: backend/target/surefire-reports/*.xml
+          reporter: java-junit
