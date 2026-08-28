@@ -82,6 +82,12 @@ api:
     hugging-face-model: deepseek-ai/DeepSeek-V3.2
     groq-key: ${GROQ_KEY_3}
     groq-model: ${GROQ_MODEL_2}
+  r2:
+    cloudflare-account-id: ${CLOUDFLARE_ID_ACCOUNT}
+    cloudflare-access-key: ${CLOUDFLARE_ACCESS_KEY}
+    cloudflare-secret-key: ${CLOUDFLARE_SECRET_KEY}
+    cloudflare-bucket-name: ${CLOUDFLARE_BUCKET_NAME}
+    cloudflare-endpoint-sa: ${CLOUDFLARE_ENDPOINT_S3}
   url:
     frontend: ${FRONTEND_URL}
 # jwt key
