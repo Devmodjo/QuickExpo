@@ -44,7 +44,9 @@ public class SecurityConfig {
                                 "/logout", "/error",
                                 "/api/orders/**",
                                 "/api/project-session/**",
-                                "/api/generated-content/**").authenticated()
+                                "/api/generated-content/**",
+                                "/api/templates/**",
+                                "/api/generated-document/**").authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth -> oauth
