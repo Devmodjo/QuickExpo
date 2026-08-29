@@ -87,6 +87,7 @@ api:
     cloudflare-access-key: ${CLOUDFLARE_ACCESS_KEY}
     cloudflare-secret-key: ${CLOUDFLARE_SECRET_KEY}
     cloudflare-bucket-name: ${CLOUDFLARE_BUCKET_NAME}
+    cloudflare-api-jeton: ${CLOUDFLARE_API_JETON}
     cloudflare-endpoint-sa: ${CLOUDFLARE_ENDPOINT_S3}
   url:
     frontend: ${FRONTEND_URL}
