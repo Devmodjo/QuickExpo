@@ -1,69 +1,37 @@
 :host {
     display: block;
-    min-height: 100vh; /* make dashboard occupy entire viewport */
+    min-height: 100vh;
 }
 
-/* Light theme for dashboard */
 :host(.dashboard-light) {
-    --primary: 220 90% 56%; /* blue primary instead of emerald */
-    --accent: 220 90% 56%;
+    --dashboard-bg: #f4f7f6;
+    --surface: #ffffff;
+    --surface-soft: rgba(255, 255, 255, 0.7);
+    --border: rgba(15, 35, 31, 0.12);
+    --text: #0f172a;
+    --muted: #5b6b67;
+    --primary: #0d2d2d;
+    --primary-soft: rgba(13, 45, 45, 0.08);
 }
 
-:host(.dashboard-light) .dashboard-root {
-    background-color: #ffffff;
-    color: #111827; /* gray-900 */
-}
-
-/* Dark theme for dashboard */
 :host(.dashboard-dark) {
-    --primary: 220 80% 50%; /* blue-ish primary in dark */
-    --accent: 220 80% 50%;
+    --dashboard-bg: #0b120f;
+    --surface: #111d1b;
+    --surface-soft: rgba(20, 31, 30, 0.8);
+    --border: rgba(255, 255, 255, 0.08);
+    --text: #ecfdf5;
+    --muted: #c8d7d2;
+    --primary: #0d2d2d;
+    --primary-soft: rgba(255, 255, 255, 0.06);
 }
 
-:host(.dashboard-dark) .dashboard-root {
-    background-color: #0f172a; /* slate-900 */
-    color: #e5e7eb; /* gray-200 */
-}
-
-/* Make dashboard root a column flex so it fills viewport and content can stretch */
 .dashboard-root {
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    background: var(--dashboard-bg);
+    color: var(--text);
 }
 
-.dashboard-root section {
-    flex: 1 1 auto; /* take remaining space */
-}
-
-.dashboard-controls button {
-    background: transparent;
-}
-
-/* Make sure inner navbar background overrides global root colors */
-.dashboard-root dashboard-navbar nav {
-    background: inherit;
-    color: inherit;
-}
-
-/* Override site-wide emerald styles inside dashboard to remove green accents */
-:host .btn-emerald {
-    background-color: hsl(var(--primary));
-    color: var(--primary-foreground, #fff) !important;
-    box-shadow: 0 4px 20px rgba(2,6,23,0.15);
-}
-
-:host .btn-emerald:hover {
-    background-color: hsl(var(--primary));
-}
-
-:host .badge-emerald {
-    background-color: rgba(15,23,42,0.06);
-    color: inherit;
-    border: 1px solid rgba(15,23,42,0.06);
-}
-
-:host .glass-card {
-    border: 1px solid rgba(15,23,42,0.06);
-    box-shadow: 0 10px 30px -10px rgba(2,6,23,0.06);
+.dashboard-root dashboard-navbar {
+    display: block;
+    width: 100%;
 }

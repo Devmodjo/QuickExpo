@@ -1,0 +1,73 @@
+@if (isOpen) {
+  <div class="search-overlay" [class.is-closing]="isClosing()" (click)="closeModal()">
+    <div
+      class="search-dialog"
+      [class.is-closing]="isClosing()"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Recherche de projets"
+      (click)="$event.stopPropagation()"
+    >
+      <header class="search-header">
+        <div>
+          <p class="eyebrow">Recherche</p>
+          <h2>Mes projets</h2>
+        </div>
+
+        <button type="button" class="close-button" aria-label="Fermer la recherche" (click)="closeModal()">
+          ×
+        </button>
+      </header>
+
+      <label class="search-input" for="project-search">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="6.5"></circle>
+          <path d="M16 16L21 21"></path>
+        </svg>
+
+        <input
+          id="project-search"
+          type="search"
+          [value]="searchTerm()"
+          (input)="onSearchInput($event)"
+          placeholder="Rechercher un projet, un thème, une langue..."
+        />
+      </label>
+
+      @if (isLoading()) {
+        <div class="status-box">Chargement des projets...</div>
+      } @else {
+        @if (filteredProjects().length) {
+          <div class="result-list">
+            @for (project of filteredProjects(); track project.id) {
+              <article class="project-item">
+                <div class="project-visual" [attr.data-tone]="project.theme ? 'theme' : 'default'">
+                  <span>{{ getShortLabel(project) }}</span>
+                </div>
+
+                <div class="project-content">
+                  <div class="project-topline">
+                    <h3>{{ project.subject }}</h3>
+                    <span class="project-badge">{{ project.language }}</span>
+                  </div>
+
+                  <p>{{ project.description || 'Aucune description disponible.' }}</p>
+
+                  <div class="project-meta">
+                    <span>{{ project.academicLevel }}</span>
+                    <span>{{ formatDate(project.updatedAt ?? project.createdAt) }}</span>
+                  </div>
+                </div>
+              </article>
+            }
+          </div>
+        } @else {
+          <div class="empty-state">
+            <strong>Aucun projet trouvé.</strong>
+            <span>Essayez un autre mot-clé ou un autre thème.</span>
+          </div>
+        }
+      }
+    </div>
+  </div>
+}

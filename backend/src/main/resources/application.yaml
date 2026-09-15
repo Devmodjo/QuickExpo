@@ -91,7 +91,22 @@ api:
     cloudflare-endpoint-sa: ${CLOUDFLARE_ENDPOINT_S3}
   url:
     frontend: ${FRONTEND_URL}
-# jwt key
+
+app:
+  cors:
+    allowed-origins:
+      - https://quick-expo.vercel.app
+      - http://localhost:4200
+    allowed-methods:
+      - GET
+      - POST
+      - PUT
+      - PATCH
+      - DELETE
+    allowed-headers:
+      - "*"
+    allow-credentials: true
+
 jwt:
   secret: ${JWT_SECRET_KEY}
   expiration-min: 86400000

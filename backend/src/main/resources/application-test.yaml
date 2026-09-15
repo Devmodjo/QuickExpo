@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+
+  flyway:
+    enabled: false
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: dummy-client-id
+            client-secret: dummy-client-secret
+          github:
+            client-id: dummy-client-id
+            client-secret: dummy-client-secret
+
+jwt:
+  secret: dummy-secret-key-only-for-ci-tests-never-use-in-production-32chars-min
+  expiration-min: 3600000
+
+api:
+  ai:
+    hugging-face-key: dummy
+    hugging-face-model: dummy
+    groq-key: dummy
+    groq-model: dummy

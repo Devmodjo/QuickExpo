@@ -1,12 +1,14 @@
-<main class="w-full h-full dashboard-root">
-    <dashboard-navbar></dashboard-navbar> 
-    <!-- <div class="dashboard-controls p-4">
-        <button (click)="dashboardTheme.toggleTheme()" class="px-3 py-1 rounded border">
-            Basculer le thème du dashboard (actuel: {{ dashboardTheme.theme() }})
-        </button>
-    </div> -->
+<main class="dashboard-root">
+    <dashboard-navbar></dashboard-navbar>
 
-      
+    <dashboard-layout
+        [projects]="filteredProjects"
+        [filters]="filters"
+        [activeFilter]="activeFilter"
+        [viewMode]="viewMode"
+        (filterChange)="onFilterChange($event)"
+        (viewModeChange)="onViewModeChange($event)"
+    ></dashboard-layout>
 
     <router-outlet></router-outlet>
 </main>

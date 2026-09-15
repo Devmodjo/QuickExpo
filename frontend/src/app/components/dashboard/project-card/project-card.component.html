@@ -1,0 +1,30 @@
+<article class="project-card" [class.is-list]="viewMode === 'list'">
+  <div class="project-card__visual" [ngClass]=" 'dark'">
+    <img
+      *ngIf="!imageFailed"
+      [src]="project.image"
+      [alt]="project.theme"
+      (error)="onImageError()"
+    />
+
+    <div class="project-card__placeholder" *ngIf="imageFailed">
+      {{ initials }}
+    </div>
+  </div>
+
+  <div class="project-card__body">
+    <h3>{{ project.theme }}</h3>
+
+    <div class="project-card__meta">
+      <span>{{ project.subject }}</span> <br />
+      <span>{{ project.createdAt | date:'short' }}</span>
+      <button type="button" class="project-card__menu" aria-label="Plus d'options">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="5" r="1.5"></circle>
+          <circle cx="12" cy="12" r="1.5"></circle>
+          <circle cx="12" cy="19" r="1.5"></circle>
+        </svg>
+      </button>
+    </div>
+  </div>
+</article>
