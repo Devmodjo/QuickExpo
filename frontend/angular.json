@@ -27,6 +27,11 @@
             "styles": [
               "src/styles.css"
             ],
+            "optimization": {
+              "fonts": {
+                "inline": false
+              }
+            },
             "outputMode": "static"
           },
           "configurations": {
@@ -39,8 +44,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "10kB",
+                  "maximumError": "16kB"
                 }
               ],
               "outputHashing": "all"

@@ -1,30 +1,111 @@
-<article class="project-card" [class.is-list]="viewMode === 'list'">
-  <div class="project-card__visual" [ngClass]=" 'dark'">
+<article class="project-card" [class.is-list]="viewMode === 'list'" (click)="onCardClick()">
+  <div class="project-card__visual" [ngClass]="'dark'">
     <img
-      *ngIf="!imageFailed"
+      *ngIf="!imageFailed && project.image"
       [src]="project.image"
       [alt]="project.theme"
       (error)="onImageError()"
     />
 
-    <div class="project-card__placeholder" *ngIf="imageFailed">
+    <div class="project-card__placeholder" *ngIf="imageFailed || !project.image">
       {{ initials }}
     </div>
+
+    <!-- Badge du statut de workflow (Plan à générer / Plan généré / Plan validé) -->
+    <span class="project-card__status-badge" [ngClass]="statusClass">
+      <span class="status-dot"></span>
+      {{ statusLabel }}
+    </span>
+
+    @if (project.academicLevel) {
+      <span class="project-card__level-badge">{{ project.academicLevel }}</span>
+    }
   </div>
 
   <div class="project-card__body">
-    <h3>{{ project.theme }}</h3>
+    <div class="project-card__content">
+      <h3 class="project-card__title">{{ project.theme }}</h3>
+      <p class="project-card__subject">{{ project.subject }}</p>
+    </div>
 
     <div class="project-card__meta">
-      <span>{{ project.subject }}</span> <br />
-      <span>{{ project.createdAt | date:'short' }}</span>
-      <button type="button" class="project-card__menu" aria-label="Plus d'options">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="5" r="1.5"></circle>
-          <circle cx="12" cy="12" r="1.5"></circle>
-          <circle cx="12" cy="19" r="1.5"></circle>
-        </svg>
-      </button>
+      <span class="project-card__date">{{ project.createdAt | date:'shortDate' }}</span>
+      
+      <div class="project-card__menu-wrapper" (click)="$event.stopPropagation()">
+        <button 
+          type="button" 
+          class="project-card__menu" 
+          aria-label="Options du projet"
+          (click)="toggleMenu($event)"
+          title="Plus d'actions"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="5" r="1.5"></circle>
+            <circle cx="12" cy="12" r="1.5"></circle>
+            <circle cx="12" cy="19" r="1.5"></circle>
+          </svg>
+        </button>
+
+        @if (isMenuOpen()) {
+          <div class="project-card__dropdown animate-dropdown">
+            <!-- Option 0: Ouvrir le plan / workflow -->
+            <button 
+              type="button" 
+              class="dropdown-item workflow-action"
+              (click)="onCardClick(); closeMenu()"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+              </svg>
+              <span>Ouvrir le plan</span>
+            </button>
+
+            <!-- Option 1: Voir les détails -->
+            <button 
+              type="button" 
+              class="dropdown-item"
+              (click)="onViewDetails($event)"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <span>Voir les détails</span>
+            </button>
+
+            <!-- Option 2: Modifier -->
+            <button 
+              type="button" 
+              class="dropdown-item"
+              (click)="onEdit($event)"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 20h9"/>
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+              </svg>
+              <span>Modifier</span>
+            </button>
+
+            <!-- Option 3: Supprimer -->
+            <button 
+              type="button" 
+              class="dropdown-item delete"
+              (click)="onDelete($event)"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                <line x1="10" y1="11" x2="10" y2="17"/>
+                <line x1="14" y1="11" x2="14" y2="17"/>
+              </svg>
+              <span>Supprimer</span>
+            </button>
+          </div>
+        }
+      </div>
     </div>
   </div>
 </article>

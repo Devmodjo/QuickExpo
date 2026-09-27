@@ -13,6 +13,7 @@ import { ProjectSessionService } from '../../../services/project-session.service
 export class SearchProjectComponent implements OnInit {
   @Input() isOpen = false;
   @Output() close = new EventEmitter<void>();
+  @Output() selectProject = new EventEmitter<ProjectSessionResponse>();
 
   private readonly projectSession = inject(ProjectSessionService);
 
@@ -20,6 +21,51 @@ export class SearchProjectComponent implements OnInit {
   readonly projects = signal<ProjectSessionResponse[]>([]);
   readonly isLoading = signal(false);
   readonly isClosing = signal(false);
+
+  /**
+   * Sélectionne un projet, ferme la modal et émet l'événement pour ouvrir le studio de plan.
+   */
+  onSelectProject(project: ProjectSessionResponse): void {
+    this.closeModal();
+    this.selectProject.emit(project);
+  }
+
+  /**
+   * Retourne le libellé du statut de workflow pour l'élément recherché.
+   */
+  getStatusLabel(project: ProjectSessionResponse): string {
+    switch (project.projectStatus) {
+      case 'PLAN_VALIDATED':
+        return 'Plan validé';
+      case 'PLAN_GENERATED':
+        return 'Plan généré';
+      case 'PREVIEW_GENERATED':
+        return 'Contenu prêt';
+      case 'COMPLETED':
+        return 'Terminé';
+      case 'GENERATING':
+        return 'Génération...';
+      case 'PROJECT_CREATED':
+      default:
+        return 'Plan à générer';
+    }
+  }
+
+  getStatusClass(project: ProjectSessionResponse): string {
+    switch (project.projectStatus) {
+      case 'PLAN_VALIDATED':
+        return 'status-validated';
+      case 'PLAN_GENERATED':
+        return 'status-generated';
+      case 'PREVIEW_GENERATED':
+        return 'status-content';
+      case 'COMPLETED':
+        return 'status-completed';
+      case 'PROJECT_CREATED':
+      default:
+        return 'status-pending';
+    }
+  }
 
   readonly filteredProjects = computed(() => {
     const term = this.searchTerm().trim().toLowerCase();

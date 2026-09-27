@@ -38,7 +38,7 @@ import { API_URL_AUTH_GITHUB, API_URL_AUTH_GOOGLE } from '../../../../../env';
             {{ activeTab === 'login' ? 'Bienvenue sur QuickExpo' : 'Créez votre compte' }}
           </h3>
           <p class="text-xs sm:text-sm text-gray-300 font-medium">
-            {{ activeTab === 'login' ? 'Connectez-vous pour générer vos exposés IA' : 'Accès gratuit instantané à la plateforme' }}
+            {{ activeTab === 'login' ? 'Connectez-vous à votre espace académique' : 'Accès à votre espace de rédaction structurée' }}
           </p>
         </div>
 

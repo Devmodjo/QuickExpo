@@ -3,7 +3,7 @@ import { ProjectSessionID } from "../models/ProjectSessionID";
 import { ProjectSessionRequest } from "../models/ProjectSessionRequest";
 import { ProjectSessionResponse } from "../models/ProjectSessionResponse";
 import { ProjectStatus } from "../enum/ProjectStatus";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { 
     API_URL_PROJECT_SESSION,
     API_URL_AUTH_SUCCESS
@@ -21,11 +21,13 @@ export class ProjectSessionService {
     public client = inject(HttpClient);
     // public auth = inject(AuthService);
 
-    public createProjectSession(userId: string): Observable<ProjectSessionID> {
-        // this.auth.getCurrentUser().subscribe(user => {
-        //     localStorage.setItem('userId', user.id);
-        // });
-        return this.client.post<ProjectSessionID>(`${API_URL_PROJECT_SESSION}`, { userId }, { withCredentials: true });
+    public createProjectSession(userId: string, projectSessionRequest: ProjectSessionRequest): Observable<ProjectSessionID> {
+        const params = new HttpParams().set('userId', userId);
+        return this.client.post<ProjectSessionID>(
+            `${API_URL_PROJECT_SESSION}`,
+            projectSessionRequest,
+            { params, withCredentials: true }
+        );
     }
 
     public getProjectSession(): Observable<ProjectSessionResponse[]> {

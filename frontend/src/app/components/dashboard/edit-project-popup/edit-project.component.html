@@ -1,0 +1,138 @@
+@if (isOpen && project) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <!-- Header -->
+      <div class="modal-header">
+        <h2>Modifier le projet</h2>
+        <button class="close-btn" (click)="closeModal()" aria-label="Fermer">
+          <span>&times;</span>
+        </button>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="editForm" class="modal-form">
+        <!-- Theme -->
+        <div class="form-group">
+          <label for="edit-theme">Thème *</label>
+          <input
+            type="text"
+            id="edit-theme"
+            formControlName="theme"
+            placeholder="Entrez le thème du projet"
+            class="form-input"
+            [class.error]="editForm.get('theme')?.invalid && editForm.get('theme')?.touched"
+          />
+          @if (editForm.get('theme')?.invalid && editForm.get('theme')?.touched) {
+            <span class="error-message">Le thème est requis</span>
+          }
+        </div>
+
+        <!-- Subject -->
+        <div class="form-group">
+          <label for="edit-subject">Sujet *</label>
+          <input
+            type="text"
+            id="edit-subject"
+            formControlName="subject"
+            placeholder="Entrez le sujet"
+            class="form-input"
+            [class.error]="editForm.get('subject')?.invalid && editForm.get('subject')?.touched"
+          />
+          @if (editForm.get('subject')?.invalid && editForm.get('subject')?.touched) {
+            <span class="error-message">Le sujet est requis</span>
+          }
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label for="edit-description">Description *</label>
+          <textarea
+            id="edit-description"
+            formControlName="description"
+            placeholder="Décrivez votre projet"
+            class="form-textarea"
+            [class.error]="editForm.get('description')?.invalid && editForm.get('description')?.touched"
+            rows="3"
+          ></textarea>
+          @if (editForm.get('description')?.invalid && editForm.get('description')?.touched) {
+            <span class="error-message">La description est requise</span>
+          }
+        </div>
+
+        <!-- Academic Level -->
+        <div class="form-group">
+          <label for="edit-academicLevel">Niveau académique *</label>
+          <select
+            id="edit-academicLevel"
+            formControlName="academicLevel"
+            class="form-select"
+            [class.error]="editForm.get('academicLevel')?.invalid && editForm.get('academicLevel')?.touched"
+          >
+            <option value="">Sélectionnez un niveau</option>
+            <option value="Enseignement secondaire">Enseignement secondaire</option>
+            <option value="Licence">Licence</option>
+            <option value="Master">Master</option>
+            <option value="Doctorat">Doctorat</option>
+            <option value="Autre">Autre</option>
+          </select>
+          @if (editForm.get('academicLevel')?.invalid && editForm.get('academicLevel')?.touched) {
+            <span class="error-message">Le niveau académique est requis</span>
+          }
+        </div>
+
+        <!-- Language -->
+        <div class="form-group">
+          <label for="edit-language">Langue *</label>
+          <select
+            id="edit-language"
+            formControlName="language"
+            class="form-select"
+            [class.error]="editForm.get('language')?.invalid && editForm.get('language')?.touched"
+          >
+            <option value="">Sélectionnez une langue</option>
+            <option value="Français">Français</option>
+            <option value="Anglais">Anglais</option>
+            <option value="Espagnol">Espagnol</option>
+          </select>
+          @if (editForm.get('language')?.invalid && editForm.get('language')?.touched) {
+            <span class="error-message">La langue est requise</span>
+          }
+        </div>
+
+        <!-- Expected Pages -->
+        <div class="form-group">
+          <label for="edit-expectedPages">Nombre de pages attendues *</label>
+          <input
+            type="number"
+            id="edit-expectedPages"
+            formControlName="expectedPages"
+            placeholder="Ex: 20"
+            class="form-input"
+            [class.error]="editForm.get('expectedPages')?.invalid && editForm.get('expectedPages')?.touched"
+            min="1"
+          />
+          @if (editForm.get('expectedPages')?.invalid && editForm.get('expectedPages')?.touched) {
+            <span class="error-message">Le nombre de pages est requis</span>
+          }
+        </div>
+      </form>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button class="btn btn-cancel" (click)="closeModal()" [disabled]="isSubmitting()">Annuler</button>
+        <button
+          class="btn btn-save"
+          (click)="updateProject()"
+          [disabled]="editForm.invalid || isSubmitting()"
+        >
+          @if (isSubmitting()) {
+            <span class="btn-spinner"></span>
+            <span>Enregistrement...</span>
+          } @else {
+            <span>Enregistrer les modifications</span>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

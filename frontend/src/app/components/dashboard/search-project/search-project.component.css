@@ -123,6 +123,18 @@
   border: 1px solid rgba(126, 223, 168, 0.14);
   border-radius: 18px;
   padding: 14px;
+  transition: all 0.2s ease;
+}
+
+.project-item.clickable {
+  cursor: pointer;
+}
+
+.project-item.clickable:hover {
+  transform: translateY(-2px);
+  background: rgba(17, 46, 38, 0.95);
+  border-color: rgba(52, 211, 153, 0.45);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
 .project-visual {
@@ -148,6 +160,45 @@
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 8px;
+}
+
+.topline-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-pill {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.status-pill.status-validated {
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.35);
+}
+
+.status-pill.status-generated {
+  background: rgba(56, 189, 248, 0.18);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
+.status-pill.status-pending {
+  background: rgba(148, 163, 184, 0.18);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.action-cta {
+  color: #34d399;
+  font-weight: 600;
+  font-size: 0.76rem;
+  margin-left: auto;
 }
 
 .project-topline h3 {
@@ -180,6 +231,7 @@
 
 .project-meta {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
   margin-top: 12px;

@@ -40,7 +40,7 @@
         @if (filteredProjects().length) {
           <div class="result-list">
             @for (project of filteredProjects(); track project.id) {
-              <article class="project-item">
+              <article class="project-item clickable" (click)="onSelectProject(project)" title="Cliquer pour ouvrir le plan et continuer le workflow">
                 <div class="project-visual" [attr.data-tone]="project.theme ? 'theme' : 'default'">
                   <span>{{ getShortLabel(project) }}</span>
                 </div>
@@ -48,7 +48,12 @@
                 <div class="project-content">
                   <div class="project-topline">
                     <h3>{{ project.subject }}</h3>
-                    <span class="project-badge">{{ project.language }}</span>
+                    <div class="topline-badges">
+                      <span class="status-pill" [ngClass]="getStatusClass(project)">
+                        {{ getStatusLabel(project) }}
+                      </span>
+                      <span class="project-badge">{{ project.language }}</span>
+                    </div>
                   </div>
 
                   <p>{{ project.description || 'Aucune description disponible.' }}</p>
@@ -56,6 +61,7 @@
                   <div class="project-meta">
                     <span>{{ project.academicLevel }}</span>
                     <span>{{ formatDate(project.updatedAt ?? project.createdAt) }}</span>
+                    <span class="action-cta">Ouvrir le plan →</span>
                   </div>
                 </div>
               </article>

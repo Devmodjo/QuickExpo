@@ -9,6 +9,16 @@
             "projectName": "5minexpo",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-QuickExpoApplication<5minexpo>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "cm.mvtech._minexpo.QuickExpoApplication",
+            "projectName": "5minexpo",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

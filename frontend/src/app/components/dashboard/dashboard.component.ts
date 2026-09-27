@@ -16,19 +16,27 @@ import { ProjectStatus } from '../../enum/ProjectStatus';
     imports: [CommonModule, NavBarComponent, DashboardLayoutComponent, RouterOutlet]
 })
 export class DashboardComponent implements OnInit {
-    public readonly filters = ['Tous', 'En cours', 'Terminés', 'À vérifier'];
+    
+    public readonly filters = ['Tous', 'En cours'];
     public activeFilter = 'Tous';
     public viewMode: 'grid' | 'list' = 'grid';
     public projectSession = inject(ProjectSessionService);
     public projects = signal<ProjectSessionResponse[]>([]);
 
     ngOnInit(): void {
+        this.loadProjects();
+    }
+
+    /**
+     * Charge et rafraîchit la liste des sessions de projet de l'utilisateur.
+     */
+    public loadProjects(): void {
         this.projectSession.getProjectSession().subscribe({
             next: (projects) => {
                 this.projects.set(Array.isArray(projects) ? projects : []);
             },
             error: (err) => {
-                console.error(err);
+                console.error('Erreur chargement des sessions de projet:', err);
                 this.projects.set([]);
             }
         });
@@ -60,17 +68,17 @@ export class DashboardComponent implements OnInit {
                 return allProjects.filter(
                     (project) => project.projectStatus !== ProjectStatus.COMPLETED
                 );
-            case 'Terminés':
-                return allProjects.filter(
-                    (project) => project.projectStatus === ProjectStatus.COMPLETED
-                );
-            case 'À vérifier':
-                return allProjects.filter(
-                    (project) =>
-                        project.projectStatus === ProjectStatus.PLAN_GENERATED ||
-                        project.projectStatus === ProjectStatus.PLAN_VALIDATED ||
-                        project.projectStatus === ProjectStatus.PREVIEW_GENERATED
-                );
+            // case 'Terminés':
+            //     return allProjects.filter(
+            //         (project) => project.projectStatus === ProjectStatus.COMPLETED
+            //     );
+            // case 'À vérifier':
+            //     return allProjects.filter(
+            //         (project) =>
+            //             project.projectStatus === ProjectStatus.PLAN_GENERATED ||
+            //             project.projectStatus === ProjectStatus.PLAN_VALIDATED ||
+            //             project.projectStatus === ProjectStatus.PREVIEW_GENERATED
+            //     );
             case 'Tous':
             default:
                 return allProjects;

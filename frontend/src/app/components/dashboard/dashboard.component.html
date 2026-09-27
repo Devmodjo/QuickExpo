@@ -8,6 +8,7 @@
         [viewMode]="viewMode"
         (filterChange)="onFilterChange($event)"
         (viewModeChange)="onViewModeChange($event)"
+        (projectsUpdated)="loadProjects()"
     ></dashboard-layout>
 
     <router-outlet></router-outlet>

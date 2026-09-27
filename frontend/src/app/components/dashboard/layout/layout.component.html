@@ -40,7 +40,7 @@
         <span class="action-pill">AI</span>
       </button>
 
-      <button type="button" class="action-button secondary">
+      <button type="button" class="action-button secondary" (click)="openCreateModal()">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6V5Z"></path>
         </svg>
@@ -82,11 +82,34 @@
       <app-project-card
         [project]="project"
         [viewMode]="viewMode"
+        (selectProject)="openPlanStudio($event)"
+        (viewDetails)="onViewDetails($event)"
+        (deleteProject)="onDeleteProject($event)"
       ></app-project-card>
     }
   </section>
 
   @if (isSearchOpen) {
-    <app-search-project [isOpen]="isSearchOpen" (close)="closeSearch()" />
+    <app-search-project
+      [isOpen]="isSearchOpen"
+      (close)="closeSearch()"
+      (selectProject)="openPlanStudio($event)"
+    />
   }
+
+  <app-create-project [isOpen]="isCreateModalOpen()" (close)="closeCreateModal()" />
+
+  <app-project-details 
+    [isOpen]="isDetailsModalOpen()" 
+    [project]="selectedProject()" 
+    (close)="closeDetailsModal()" 
+  />
+
+  <!-- Studio de génération et d'édition de plan (Workflow étape 2) -->
+  <app-plan-studio
+    [isOpen]="isPlanStudioOpen()"
+    [project]="activeWorkflowProject()"
+    (close)="closePlanStudio()"
+    (projectStatusUpdated)="onProjectStatusUpdated($event)"
+  />
 </div>

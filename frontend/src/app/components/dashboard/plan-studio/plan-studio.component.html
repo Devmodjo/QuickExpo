@@ -1,0 +1,569 @@
+@if (isOpen && project) {
+  <div class="studio-overlay" role="dialog" aria-modal="true" aria-label="Studio de génération de plan">
+    <div class="studio-container">
+
+      <!-- TOPBAR NAVIGATION & WORKFLOW STEPPER (STYLE GAMMA / SUPABASE) -->
+      <header class="studio-topbar">
+        <div class="topbar-left">
+          <button type="button" class="back-button" (click)="closeStudio()" title="Retour au tableau de bord">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Tableau de bord</span>
+          </button>
+
+          <div class="project-summary">
+            <div class="project-title-row">
+              <h2 class="project-title">{{ project.subject || project.theme }}</h2>
+              <span class="project-pill theme">{{ project.theme }}</span>
+            </div>
+            <div class="project-badges-row">
+              <span class="badge-item">{{ project.academicLevel }}</span>
+              <span class="badge-dot">•</span>
+              <span class="badge-item">{{ project.language }}</span>
+              @if (project.expectedPages) {
+                <span class="badge-dot">•</span>
+                <span class="badge-item">{{ project.expectedPages }} pages attendues</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- WORKFLOW STEPPER HORIZONTAL -->
+        <nav class="workflow-stepper" aria-label="Étapes de création">
+          <!-- Étape 1 : Session Projet -->
+          <div class="step-item completed">
+            <span class="step-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+            <span class="step-label">1. Session</span>
+          </div>
+
+          <div class="step-divider active"></div>
+
+          <!-- Étape 2 : Plan d'exposé (Active) -->
+          <div class="step-item current">
+            <span class="step-icon step-pulse">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+              </svg>
+            </span>
+            <span class="step-label">2. Plan</span>
+          </div>
+
+          <div class="step-divider" [class.active]="isPlanValidated()"></div>
+
+          <!-- Étape 3 : Contenu rédigé -->
+          <div class="step-item" [class.unlocked]="isPlanValidated()" (click)="isPlanValidated() ? openNextStepWorkflow() : null">
+            <span class="step-icon">3</span>
+            <span class="step-label">3. Contenu</span>
+          </div>
+
+          <div class="step-divider"></div>
+
+          <!-- Étape 4 : Document -->
+          <div class="step-item upcoming">
+            <span class="step-icon">4</span>
+            <span class="step-label">4. Document</span>
+          </div>
+
+          <div class="step-divider"></div>
+
+          <!-- Étape 5 : Téléchargement -->
+          <div class="step-item upcoming">
+            <span class="step-icon">5</span>
+            <span class="step-label">5. Téléchargement</span>
+          </div>
+        </nav>
+
+        <div class="topbar-right">
+          <!-- Statut Badge Supabase Style -->
+          @if (isPlanValidated()) {
+            <span class="status-chip validated">
+              <span class="status-indicator"></span>
+              Plan Validé
+            </span>
+          } @else if (currentPlan()) {
+            <span class="status-chip generated">
+              <span class="status-indicator"></span>
+              Plan Généré
+            </span>
+          } @else {
+            <span class="status-chip pending">
+              <span class="status-indicator"></span>
+              En attente de plan
+            </span>
+          }
+
+          <button type="button" class="close-studio-btn" (click)="closeStudio()" aria-label="Fermer le studio">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- CORPS PRINCIPAL DU STUDIO -->
+      <main class="studio-body">
+
+        <!-- ÉTAT 1 : CHARGEMENT INITIAL -->
+        @if (isLoading()) {
+          <div class="studio-loading-state">
+            <div class="loading-spinner"></div>
+            <p class="loading-title">Recherche du plan en cours...</p>
+            <p class="loading-subtitle">Synchronisation avec vos sessions de travail QuickExpo</p>
+          </div>
+        }
+
+        <!-- ÉTAT 2 : AUCUN PLAN ENCORE GÉNÉRÉ (ACCUEIL WORKFLOW FAÇON GAMMA) -->
+        @else if (!currentPlan()) {
+          <div class="empty-plan-hero">
+            <div class="hero-card">
+              <div class="hero-badge">
+                <span class="sparkle-icon">✨</span>
+                <span>Étape 2 / 5 : Élaboration du plan</span>
+              </div>
+
+              <h1 class="hero-title">Générez le plan directeur de votre exposé</h1>
+              <p class="hero-description">
+                QuickExpo analyse votre sujet et vos paramètres académiques pour structurer une argumentation 
+                rigoureuse, équilibrée et prête à être développée. Vous pourrez ensuite ajuster chaque axe en direct.
+              </p>
+
+              <!-- Carte récapitulative des paramètres du projet -->
+              <div class="project-params-card">
+                <div class="param-box">
+                  <span class="param-label">Sujet de recherche</span>
+                  <strong class="param-value">{{ project.subject }}</strong>
+                </div>
+
+                <div class="param-grid">
+                  <div class="param-item">
+                    <span class="param-label">Domaine / Thème</span>
+                    <span class="param-tag">{{ project.theme }}</span>
+                  </div>
+                  <div class="param-item">
+                    <span class="param-label">Niveau académique</span>
+                    <span class="param-tag">{{ project.academicLevel }}</span>
+                  </div>
+                  <div class="param-item">
+                    <span class="param-label">Langue de rédaction</span>
+                    <span class="param-tag">{{ project.language }}</span>
+                  </div>
+                  <div class="param-item">
+                    <span class="param-label">Volume visé</span>
+                    <span class="param-tag">{{ project.expectedPages ? project.expectedPages + ' pages' : 'Non précisé' }}</span>
+                  </div>
+                </div>
+
+                @if (project.description) {
+                  <div class="param-description">
+                    <span class="param-label">Description / Cadrage méthodologique</span>
+                    <p>{{ project.description }}</p>
+                  </div>
+                }
+              </div>
+
+              <!-- Erreur éventuelle -->
+              @if (errorMessage()) {
+                <div class="error-banner">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                  <span>{{ errorMessage() }}</span>
+                </div>
+              }
+
+              <!-- Bouton d'action principal de génération avec état de chargement IA -->
+              <div class="hero-action-area">
+                @if (isGenerating()) {
+                  <div class="ai-generating-box">
+                    <div class="ai-pulse-radar">
+                      <div class="pulse-ring"></div>
+                      <div class="pulse-core">✨</div>
+                    </div>
+                    <div class="generating-text">
+                      <p class="generating-main-title">Génération par l'IA en cours...</p>
+                      <p class="generating-progress-step">{{ generationProgressText() }}</p>
+                    </div>
+                  </div>
+                } @else {
+                  <button
+                    type="button"
+                    class="btn-primary-generate"
+                    (click)="triggerPlanGeneration()"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+                    </svg>
+                    <span>Générer le plan avec l'IA</span>
+                  </button>
+                  <span class="sub-hint">Traitement instantané via nos modèles d'ingénierie académique</span>
+                }
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- ÉTAT 3 : PLAN DISPONIBLE (STUDIO DE RÉDACTION ET PREVIEW EN DIRECT) -->
+        @else {
+          <div class="studio-workspace">
+            
+            <!-- BARRE D'OUTILS MARKDOWN & ACTIONS DE FORMATAGE -->
+            <section class="studio-toolbar">
+              <!-- Outils Markdown Rapides -->
+              <div class="toolbar-group">
+                <button type="button" class="tool-btn" (click)="insertMarkdownSyntax('h1')" title="Grand Titre (#)">
+                  <span class="tool-label">H1</span>
+                </button>
+                <button type="button" class="tool-btn" (click)="insertMarkdownSyntax('h2')" title="Sous-titre (##)">
+                  <span class="tool-label">H2</span>
+                </button>
+                <button type="button" class="tool-btn" (click)="insertMarkdownSyntax('h3')" title="Section (###)">
+                  <span class="tool-label">H3</span>
+                </button>
+
+                <div class="tool-separator"></div>
+
+                <button type="button" class="tool-btn" (click)="insertMarkdownSyntax('bold')" title="Gras (**)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
+                    <path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path>
+                  </svg>
+                </button>
+                <button type="button" class="tool-btn" (click)="insertMarkdownSyntax('italic')" title="Italique (*)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="19" y1="4" x2="10" y2="4"></line>
+                    <line x1="14" y1="20" x2="5" y2="20"></line>
+                    <line x1="15" y1="4" x2="9" y2="20"></line>
+                  </svg>
+                </button>
+
+                <div class="tool-separator"></div>
+
+                <button type="button" class="tool-btn" (click)="insertMarkdownSyntax('bullet')" title="Liste à puces (-)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <circle cx="4" cy="6" r="1.5" fill="currentColor"></circle>
+                    <circle cx="4" cy="12" r="1.5" fill="currentColor"></circle>
+                    <circle cx="4" cy="18" r="1.5" fill="currentColor"></circle>
+                  </svg>
+                </button>
+                <button type="button" class="tool-btn" (click)="insertMarkdownSyntax('number')" title="Liste numérotée (1.)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="10" y1="6" x2="21" y2="6"></line>
+                    <line x1="10" y1="12" x2="21" y2="12"></line>
+                    <line x1="10" y1="18" x2="21" y2="18"></line>
+                    <path d="M4 6h2v4"></path>
+                    <path d="M4 10h4"></path>
+                  </svg>
+                </button>
+                <button type="button" class="tool-btn" (click)="insertMarkdownSyntax('quote')" title="Citation (>)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"></path>
+                    <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"></path>
+                  </svg>
+                </button>
+                <button type="button" class="tool-btn" (click)="insertMarkdownSyntax('hr')" title="Séparateur (---)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Métriques en temps réel -->
+              <div class="metrics-group">
+                <span class="metric-pill">{{ wordCount() }} mots</span>
+                <span class="metric-pill">{{ sectionCount() }} sections</span>
+              </div>
+
+              <!-- Switcher de mode de vue -->
+              <div class="view-mode-switcher">
+                <button
+                  type="button"
+                  class="mode-btn"
+                  [class.active]="viewMode() === 'split'"
+                  (click)="setViewMode('split')"
+                  title="Double vue (Édition + Rendu)"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                    <line x1="12" y1="3" x2="12" y2="21"></line>
+                  </svg>
+                  <span>Double vue</span>
+                </button>
+
+                <button
+                  type="button"
+                  class="mode-btn"
+                  [class.active]="viewMode() === 'editor'"
+                  (click)="setViewMode('editor')"
+                  title="Éditeur Markdown seul"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                  </svg>
+                  <span>Éditeur</span>
+                </button>
+
+                <button
+                  type="button"
+                  class="mode-btn"
+                  [class.active]="viewMode() === 'preview'"
+                  (click)="setViewMode('preview')"
+                  title="Aperçu Markdown seul"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  <span>Aperçu</span>
+                </button>
+              </div>
+            </section>
+
+            <!-- ZONE D'ÉDITION ET APERÇU DOUBLE VUE (SPLIT SCREEN) -->
+            <div class="editor-panes-container" [attr.data-mode]="viewMode()">
+              
+              <!-- PANNEAU ÉDITEUR MARKDOWN -->
+              @if (viewMode() === 'split' || viewMode() === 'editor') {
+                <div class="pane editor-pane">
+                  <div class="pane-header">
+                    <div class="pane-title">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="4 7 4 4 20 4 20 7"></polyline>
+                        <line x1="9" y1="20" x2="15" y2="20"></line>
+                        <line x1="12" y1="4" x2="12" y2="20"></line>
+                      </svg>
+                      <span>Code Markdown (Édition en direct)</span>
+                    </div>
+
+                    @if (hasUnsavedChanges()) {
+                      <span class="unsaved-badge">Modifications non enregistrées</span>
+                    } @else {
+                      <span class="saved-badge">À jour</span>
+                    }
+                  </div>
+
+                  <div class="pane-content editor-wrapper">
+                    <textarea
+                      #editorTextarea
+                      class="markdown-textarea"
+                      [value]="planContent()"
+                      (input)="onContentChange($any($event.target).value)"
+                      placeholder="Tapez ou personnalisez votre plan au format Markdown..."
+                      spellcheck="false"
+                    ></textarea>
+                  </div>
+                </div>
+              }
+
+              <!-- PANNEAU APERÇU RENDU MARKDOWN NATIVE -->
+              @if (viewMode() === 'split' || viewMode() === 'preview') {
+                <div class="pane preview-pane">
+                  <div class="pane-header">
+                    <div class="pane-title">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                      <span>Rendu visuel en temps réel</span>
+                    </div>
+                    <span class="preview-badge">Interprétation Markdown native</span>
+                  </div>
+
+                  <div class="pane-content preview-wrapper">
+                    <article class="markdown-body" [innerHTML]="planContent() | markdown"></article>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- BARRE D'ACTIONS INFÉRIEURE (BOTTOM BAR) -->
+            <footer class="studio-bottombar">
+              <div class="bottombar-left">
+                <!-- Bouton Régénérer avec confirmation -->
+                <button
+                  type="button"
+                  class="btn-secondary"
+                  (click)="confirmRegenerate()"
+                  [disabled]="isGenerating() || isSaving() || isValidating()"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="1 4 1 10 7 10"></polyline>
+                    <polyline points="23 20 23 14 17 14"></polyline>
+                    <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+                  </svg>
+                  <span>Régénérer le plan</span>
+                </button>
+              </div>
+
+              <div class="bottombar-right">
+                <!-- Bouton Enregistrer les modifications -->
+                <button
+                  type="button"
+                  class="btn-secondary save"
+                  [disabled]="!hasUnsavedChanges() || isSaving() || isValidating()"
+                  (click)="saveChanges()"
+                >
+                  @if (isSaving()) {
+                    <span class="btn-spinner"></span>
+                    <span>Enregistrement...</span>
+                  } @else {
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                      <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                      <polyline points="7 3 7 8 15 8"></polyline>
+                    </svg>
+                    <span>Enregistrer</span>
+                  }
+                </button>
+
+                <!-- Bouton Valider le plan -->
+                <button
+                  type="button"
+                  class="btn-validate"
+                  [class.is-validated]="isPlanValidated()"
+                  [disabled]="isValidating() || isPlanValidated()"
+                  (click)="validatePlan()"
+                >
+                  @if (isValidating()) {
+                    <span class="btn-spinner"></span>
+                    <span>Validation...</span>
+                  } @else if (isPlanValidated()) {
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span>Plan Validé</span>
+                  } @else {
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span>Valider le plan</span>
+                  }
+                </button>
+
+                <!-- Bouton Étape Suivante : Générer le document -->
+                <button
+                  type="button"
+                  class="btn-next-step"
+                  [class.unlocked]="isPlanValidated()"
+                  (click)="openNextStepWorkflow()"
+                >
+                  <span>Générer le document</span>
+                  <span class="step-badge">Étape 3</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </button>
+              </div>
+            </footer>
+          </div>
+        }
+      </main>
+    </div>
+
+    <!-- MODALE DE CONFIRMATION DE RÉGÉNÉRATION -->
+    @if (showRegenerateModal()) {
+      <div class="modal-backdrop" (click)="cancelRegenerate()">
+        <div class="confirm-dialog" (click)="$event.stopPropagation()">
+          <div class="dialog-icon warning">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          </div>
+          <h3>Régénérer le plan avec l'IA ?</h3>
+          <p>
+            Cette action va créer une toute nouvelle proposition de structure.
+            Vos modifications manuelles actuelles seront remplacées par la nouvelle version.
+          </p>
+          <div class="dialog-actions">
+            <button type="button" class="dialog-btn cancel" (click)="cancelRegenerate()">Annuler</button>
+            <button type="button" class="dialog-btn confirm" (click)="triggerPlanGeneration()">
+              Confirmer et régénérer
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- MODALE D'INFORMATION POUR LA PROCHAINE ÉTAPE DU WORKFLOW -->
+    @if (showNextStepModal()) {
+      <div class="modal-backdrop" (click)="closeNextStepWorkflow()">
+        <div class="confirm-dialog next-step-info" (click)="$event.stopPropagation()">
+          <div class="dialog-icon step-icon-glow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+          </div>
+          <h3>Étape suivante : Rédaction du contenu & Document</h3>
+          <div class="next-step-details">
+            <p>
+              Votre plan est validé et prêt à être rédigé !
+            </p>
+            <div class="step-card-preview">
+              <div class="step-card-item">
+                <span class="step-num">3</span>
+                <div>
+                  <strong>Génération du contenu rédigé</strong>
+                  <span>L'IA rédige l'intégralité du texte selon les sections de votre plan validé.</span>
+                </div>
+              </div>
+              <div class="step-card-item">
+                <span class="step-num">4</span>
+                <div>
+                  <strong>Mise en page du document final</strong>
+                  <span>Sélection du modèle de présentation et conversion typographique.</span>
+                </div>
+              </div>
+            </div>
+            <p class="step-badge-hint">
+              Cette étape sera développée lors de la prochaine phase du workflow.
+            </p>
+          </div>
+          <div class="dialog-actions">
+            <button type="button" class="dialog-btn confirm" (click)="closeNextStepWorkflow()">
+              Compris, continuer
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- TOAST NOTIFICATIONS -->
+    @if (toastMessage()) {
+      <div class="studio-toast" [class]="'toast-' + toastType()">
+        @if (toastType() === 'success') {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        } @else if (toastType() === 'error') {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+        }
+        <span>{{ toastMessage() }}</span>
+      </div>
+    }
+  </div>
+}

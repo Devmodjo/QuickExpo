@@ -26,7 +26,15 @@ export type IconName =
   | 'facebook'
   | 'x'
   | 'sparkles'
-  | 'menu';
+  | 'chevron-down'
+  | 'check'
+  | 'menu'
+  | 'star'
+  | 'terminal'
+  | 'code'
+  | 'copy'
+  | 'download'
+  | 'play';
 
 @Component({
   selector: 'app-icon',
@@ -198,12 +206,53 @@ export type IconName =
           <path d="M17 19h4" />
         </g>
 
+        <!-- CHEVRON DOWN -->
+        <g *ngSwitchCase="'chevron-down'">
+          <path d="m6 9 6 6 6-6" />
+        </g>
+
+        <!-- CHECK -->
+        <g *ngSwitchCase="'check'">
+          <polyline points="20 6 9 17 4 12" />
+        </g>
+
         <!-- MENU -->
         <g *ngSwitchCase="'menu'">
           <line x1="4" x2="20" y1="12" y2="12" />
           <line x1="4" x2="20" y1="6" y2="6" />
           <line x1="4" x2="20" y1="18" y2="18" />
         </g>
+
+        <!-- STAR -->
+        <polygon *ngSwitchCase="'star'" points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+
+        <!-- TERMINAL -->
+        <g *ngSwitchCase="'terminal'">
+          <polyline points="4 17 10 11 4 5" />
+          <line x1="12" x2="20" y1="19" y2="19" />
+        </g>
+
+        <!-- CODE -->
+        <g *ngSwitchCase="'code'">
+          <polyline points="16 18 22 12 16 6" />
+          <polyline points="8 6 2 12 8 18" />
+        </g>
+
+        <!-- COPY -->
+        <g *ngSwitchCase="'copy'">
+          <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+          <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+        </g>
+
+        <!-- DOWNLOAD -->
+        <g *ngSwitchCase="'download'">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="7 10 12 15 17 10" />
+          <line x1="12" x2="12" y1="15" y2="3" />
+        </g>
+
+        <!-- PLAY -->
+        <polygon *ngSwitchCase="'play'" points="5 3 19 12 5 21 5 3" />
 
         <!-- DEFAULT FALLBACK -->
         <circle *ngSwitchDefault cx="12" cy="12" r="10" />
