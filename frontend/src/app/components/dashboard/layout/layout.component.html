@@ -1,0 +1,115 @@
+<div class="dashboard-layout">
+  <header class="dashboard-topbar">
+    <div class="brand-wrap">
+      <div class="brand-mark" aria-label="Logo QuickExpo" role="img">
+        <span class="brand-mark__square"></span>
+      </div>
+      <span class="brand-name">QuickExpo</span>
+    </div>
+
+    <div class="topbar-actions">
+      <button type="button" class="topbar-button favorite" aria-label="Favoris">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m12 17.3-5.7 3.1 1.1-6.5L1 9.3l6.5-.9L12 2l4.5 6.4 6.5.9-6.4 4.6 1.1 6.5L12 17.3Z"></path>
+        </svg>
+        <span>115</span>
+      </button>
+
+      <button type="button" class="topbar-button" aria-label="Notifications">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3a5 5 0 0 1 5 5v3.3l1.5 4.1H5.5L7 11.3V8a5 5 0 0 1 5-5Zm0 18a2.5 2.5 0 0 1-2.4-1.7h4.8A2.5 2.5 0 0 1 12 21Z"></path>
+        </svg>
+      </button>
+
+      <button type="button" class="topbar-button" aria-label="Rechercher" (click)="openSearch()">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="5.5"></circle>
+          <path d="M16 16l5 5"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <section class="dashboard-toolbar">
+    <div class="primary-actions">
+      <button type="button" class="action-button primary">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6V5Z"></path>
+        </svg>
+        <span>Créer</span>
+        <span class="action-pill">AI</span>
+      </button>
+
+      <button type="button" class="action-button secondary" (click)="openCreateModal()">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6V5Z"></path>
+        </svg>
+        <span>Nouveau document</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="dashboard-filters">
+    <div class="filter-group" role="tablist" aria-label="Filtres des projets">
+      <button
+        *ngFor="let filter of filters"
+        type="button"
+        class="filter-chip"
+        [class.active]="filter === activeFilter"
+        (click)="onFilterClick(filter)"
+      >
+        {{ filter }}
+      </button>
+    </div>
+
+    <div class="view-switcher" aria-label="Mode d'affichage">
+      <button type="button" class="view-button" [class.active]="viewMode === 'grid'" (click)="onViewModeChange('grid')" aria-label="Vue grille">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 4h7v7H4V4Zm9 0h7v7h-7V4ZM4 13h7v7H4v-7Zm9 0h7v7h-7v-7Z"></path>
+        </svg>
+      </button>
+
+      <button type="button" class="view-button" [class.active]="viewMode === 'list'" (click)="onViewModeChange('list')" aria-label="Vue liste">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 6h14v2H5V6Zm0 5h14v2H5v-2Zm0 5h14v2H5v-2Z"></path>
+        </svg>
+      </button>
+    </div>
+  </section>
+
+  <section class="project-grid" [class.is-list]="viewMode === 'list'">
+    @for (project of projects; track project.id) {
+      <app-project-card
+        [project]="project"
+        [viewMode]="viewMode"
+        (selectProject)="openPlanStudio($event)"
+        (viewDetails)="onViewDetails($event)"
+        (deleteProject)="onDeleteProject($event)"
+      ></app-project-card>
+    }
+  </section>
+
+  @if (isSearchOpen) {
+    <app-search-project
+      [isOpen]="isSearchOpen"
+      (close)="closeSearch()"
+      (selectProject)="openPlanStudio($event)"
+    />
+  }
+
+  <app-create-project [isOpen]="isCreateModalOpen()" (close)="closeCreateModal()" />
+
+  <app-project-details 
+    [isOpen]="isDetailsModalOpen()" 
+    [project]="selectedProject()" 
+    (close)="closeDetailsModal()" 
+  />
+
+  <!-- Studio de génération et d'édition de plan (Workflow étape 2) -->
+  <app-plan-studio
+    [isOpen]="isPlanStudioOpen()"
+    [project]="activeWorkflowProject()"
+    (close)="closePlanStudio()"
+    (projectStatusUpdated)="onProjectStatusUpdated($event)"
+  />
+</div>

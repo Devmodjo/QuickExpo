@@ -1,0 +1,37 @@
+:host {
+    display: block;
+    min-height: 100vh;
+}
+
+:host(.dashboard-light) {
+    --dashboard-bg: #f4f7f6;
+    --surface: #ffffff;
+    --surface-soft: rgba(255, 255, 255, 0.7);
+    --border: rgba(15, 35, 31, 0.12);
+    --text: #0f172a;
+    --muted: #5b6b67;
+    --primary: #0d2d2d;
+    --primary-soft: rgba(13, 45, 45, 0.08);
+}
+
+:host(.dashboard-dark) {
+    --dashboard-bg: #0b120f;
+    --surface: #111d1b;
+    --surface-soft: rgba(20, 31, 30, 0.8);
+    --border: rgba(255, 255, 255, 0.08);
+    --text: #ecfdf5;
+    --muted: #c8d7d2;
+    --primary: #0d2d2d;
+    --primary-soft: rgba(255, 255, 255, 0.06);
+}
+
+.dashboard-root {
+    min-height: 100vh;
+    background: var(--dashboard-bg);
+    color: var(--text);
+}
+
+.dashboard-root dashboard-navbar {
+    display: block;
+    width: 100%;
+}

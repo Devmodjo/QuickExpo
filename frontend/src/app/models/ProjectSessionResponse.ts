@@ -1,6 +1,7 @@
 import { ProjectStatus } from "../enum/ProjectStatus";
 
 export interface ProjectSessionResponse {
+image: any;
     id: string;
     theme: string;
     subject: string;

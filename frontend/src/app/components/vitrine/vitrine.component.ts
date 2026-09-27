@@ -5,6 +5,8 @@ import { HeroComponent } from './hero/hero.component';
 import { HowItWorksComponent } from './how-it-works/how-it-works.component';
 import { FeaturesComponent } from './features/features.component';
 import { VisionComponent } from './vision/vision.component';
+import { PricingComponent } from './pricing/pricing.component';
+import { FaqComponent } from './faq/faq.component';
 import { CtaComponent } from './cta/cta.component';
 import { FooterComponent } from './footer/footer.component';
 import { AuthModalComponent } from './auth-modal/auth-modal.component';
@@ -21,6 +23,8 @@ import { SeoService } from '../../services/seo.service';
     HowItWorksComponent,
     FeaturesComponent,
     VisionComponent,
+    PricingComponent,
+    FaqComponent,
     CtaComponent,
     FooterComponent,
     AuthModalComponent,
@@ -28,12 +32,6 @@ import { SeoService } from '../../services/seo.service';
   ],
   template: `
     <div class="min-h-screen flex flex-col bg-background relative text-foreground">
-      <!-- Ambient Background Effect -->
-      <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div class="absolute -top-40 -right-40 w-96 h-96 bg-[#00D084]/10 rounded-full blur-3xl"></div>
-        <div class="absolute top-1/2 -left-40 w-80 h-80 bg-[#00D084]/10 rounded-full blur-3xl"></div>
-      </div>
-
       <!-- Navigation -->
       <app-navbar (openAuth)="isAuthModalOpen = true"></app-navbar>
 
@@ -49,13 +47,19 @@ import { SeoService } from '../../services/seo.service';
           <app-how-it-works></app-how-it-works>
         </div>
  
+        <div id="pricing">
+          <app-pricing (openAuth)="isAuthModalOpen = true"></app-pricing>
+        </div>
+
         <div id="about">
           <app-vision></app-vision>
         </div>
- 
-        <div id="pricing">
-          <app-cta (openAuth)="isAuthModalOpen = true"></app-cta>
+
+        <div id="faq">
+          <app-faq></app-faq>
         </div>
+ 
+        <app-cta (openAuth)="isAuthModalOpen = true"></app-cta>
       </main>
   
       <!-- Footer -->
@@ -91,11 +95,11 @@ export class VitrineComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.seoService.setPageSeo({
-      title: 'QuickExpo - Générez vos exposés en quelques secondes avec l\'IA',
+      title: 'QuickExpo - Documents académiques structurés selon un workflow méthodique',
       description:
-        'De la recherche de données à la mise en page finale, QuickExpo s\'occupe de tout pour vous offrir des présentations professionnelles et structurées.',
+        'Concevez des exposés et devoirs rigoureusement structurés selon les exigences universitaires grâce à un workflow clair et guidé.',
       keywords:
-        'QuickExpo, assistant méthodologique, rédaction d exposés, structuration devoirs, éducation IA, preview exposé, anti-plagiat, académique',
+        'QuickExpo, assistant méthodologique, structuration académique, rédaction devoirs, workflow universitaire, éducation IA, anti-plagiat, LMD',
       ogUrl: 'https://quickexpo.ai',
     });
 

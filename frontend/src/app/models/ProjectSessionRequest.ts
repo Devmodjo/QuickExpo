@@ -6,6 +6,6 @@ export interface ProjectSessionRequest {
     academicLevel: string;
     language: string;
     expectedPages: number | undefined;
-    createdAt: Date | undefined;
-    updatedAt: Date | undefined;
+    createdAt?: Date | undefined;
+    updatedAt?: Date | undefined;
 }

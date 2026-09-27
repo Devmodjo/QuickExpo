@@ -1,0 +1,15 @@
+<main class="dashboard-root">
+    <dashboard-navbar></dashboard-navbar>
+
+    <dashboard-layout
+        [projects]="filteredProjects"
+        [filters]="filters"
+        [activeFilter]="activeFilter"
+        [viewMode]="viewMode"
+        (filterChange)="onFilterChange($event)"
+        (viewModeChange)="onViewModeChange($event)"
+        (projectsUpdated)="loadProjects()"
+    ></dashboard-layout>
+
+    <router-outlet></router-outlet>
+</main>

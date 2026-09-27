@@ -1,0 +1,82 @@
+@if (isOpen && project) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <!-- Header -->
+      <div class="modal-header">
+        <h2>Détails du projet</h2>
+        <button class="close-btn" (click)="closeModal()" aria-label="Fermer">
+          <span>&times;</span>
+        </button>
+      </div>
+
+      <!-- Content -->
+      <div class="modal-content">
+        <!-- Project Image/Avatar -->
+        <div class="project-image">
+          @if (project.image) {
+            <img [src]="project.image" [alt]="project.theme" />
+          } @else {
+            <div class="project-avatar">{{ initials }}</div>
+          }
+        </div>
+
+        <!-- Project Info -->
+        <div class="project-info">
+          <div class="info-group">
+            <label>Thème</label>
+            <p>{{ project.theme }}</p>
+          </div>
+
+          <div class="info-group">
+            <label>Sujet</label>
+            <p>{{ project.subject }}</p>
+          </div>
+
+          <div class="info-group">
+            <label>Description</label>
+            <p>{{ project.description }}</p>
+          </div>
+
+          <div class="info-row">
+            <div class="info-group">
+              <label>Niveau académique</label>
+              <p>{{ project.academicLevel }}</p>
+            </div>
+
+            <div class="info-group">
+              <label>Langue</label>
+              <p>{{ project.language }}</p>
+            </div>
+          </div>
+
+          <div class="info-row">
+            <div class="info-group">
+              <label>Nombre de pages</label>
+              <p>{{ project.expectedPages }}</p>
+            </div>
+
+            <div class="info-group">
+              <label>Créé le</label>
+              <p>{{ project.createdAt | date:'short' }}</p>
+            </div>
+          </div>
+
+          @if (project.projectStatus) {
+            <div class="info-group">
+              <label>Statut</label>
+              <p class="status-badge" [class]="'status-' + project.projectStatus.toLowerCase()">
+                {{ project.projectStatus }}
+              </p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button class="btn btn-delete" (click)="deleteProject()">Supprimer le projet</button>
+        <button class="btn btn-close" (click)="closeModal()">Fermer</button>
+      </div>
+    </div>
+  </div>
+}

@@ -82,9 +82,31 @@ api:
     hugging-face-model: deepseek-ai/DeepSeek-V3.2
     groq-key: ${GROQ_KEY_3}
     groq-model: ${GROQ_MODEL_2}
+  r2:
+    cloudflare-account-id: ${CLOUDFLARE_ID_ACCOUNT}
+    cloudflare-access-key: ${CLOUDFLARE_ACCESS_KEY}
+    cloudflare-secret-key: ${CLOUDFLARE_SECRET_KEY}
+    cloudflare-bucket-name: ${CLOUDFLARE_BUCKET_NAME}
+    cloudflare-api-jeton: ${CLOUDFLARE_API_JETON}
+    cloudflare-endpoint-sa: ${CLOUDFLARE_ENDPOINT_S3}
   url:
     frontend: ${FRONTEND_URL}
-# jwt key
+
+app:
+  cors:
+    allowed-origins:
+      - https://quick-expo.vercel.app
+      - http://localhost:4200
+    allowed-methods:
+      - GET
+      - POST
+      - PUT
+      - PATCH
+      - DELETE
+    allowed-headers:
+      - "*"
+    allow-credentials: true
+
 jwt:
   secret: ${JWT_SECRET_KEY}
   expiration-min: 86400000
