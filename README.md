@@ -12,7 +12,7 @@ Generate complete, structured, and customizable presentations in just a few minu
 
 ![License](https://img.shields.io/badge/license-GPL-blue.svg)
 ![Java](https://img.shields.io/badge/Java-21-orange)
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.x-success)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-4-success)
 ![Angular](https://img.shields.io/badge/Angular-Latest-red)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-336791)
 
