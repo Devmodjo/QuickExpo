@@ -96,35 +96,41 @@ export class StudioComponent implements OnInit {
         this.currentPlan.set(parsedPlan);
       } catch (e) {
         console.warn('Erreur lecture plan cache local:', e);
+        this.currentPlan.set(null);
       }
+    } else {
+      this.currentPlan.set(null);
     }
 
-    this.planService.getGeneratedPlan().subscribe({
-      next: (plans) => {
-        this.isLoading.set(false);
-        if (Array.isArray(plans) && plans.length > 0) {
-          const matchingPlan = plans[plans.length - 1];
-          if (matchingPlan) {
-            this.currentPlan.set(matchingPlan);
-            localStorage.setItem(storageKey, JSON.stringify(matchingPlan));
+    if (proj.projectStatus !== ProjectStatus.PROJECT_CREATED) {
+      this.planService.getGeneratedPlan().subscribe({
+        next: (plans) => {
+          this.isLoading.set(false);
+          if (Array.isArray(plans) && plans.length > 0) {
+            const matchingPlan = plans.find((p) => p.planId === id || (p as any).projectId === id);
+            if (matchingPlan) {
+              this.currentPlan.set(matchingPlan);
+              localStorage.setItem(storageKey, JSON.stringify(matchingPlan));
+            }
           }
-        }
 
-        // Si le statut est PLAN_VALIDATED ou PREVIEW_GENERATED ou COMPLETED, passer automatiquement à l'onglet 'content' si non spécifié
-        if (!this.route.snapshot.paramMap.get('tab')) {
-          if (
-            proj.projectStatus === ProjectStatus.PLAN_VALIDATED ||
-            proj.projectStatus === ProjectStatus.PREVIEW_GENERATED ||
-            proj.projectStatus === ProjectStatus.COMPLETED
-          ) {
-            this.activeTab.set('content');
+          if (!this.route.snapshot.paramMap.get('tab')) {
+            if (
+              proj.projectStatus === ProjectStatus.PLAN_VALIDATED ||
+              proj.projectStatus === ProjectStatus.PREVIEW_GENERATED ||
+              proj.projectStatus === ProjectStatus.COMPLETED
+            ) {
+              this.activeTab.set('content');
+            }
           }
+        },
+        error: () => {
+          this.isLoading.set(false);
         }
-      },
-      error: () => {
-        this.isLoading.set(false);
-      }
-    });
+      });
+    } else {
+      this.isLoading.set(false);
+    }
   }
 
   public setTab(tab: StudioTab): void {

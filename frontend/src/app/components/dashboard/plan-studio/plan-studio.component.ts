@@ -147,7 +147,7 @@ export class PlanStudioComponent implements OnInit, OnChanges {
         next: (plans) => {
           this.isLoading.set(false);
           if (Array.isArray(plans) && plans.length > 0) {
-            const foundPlan = plans[plans.length - 1];
+            const foundPlan = plans.find((p) => p.planId === this.project?.id || (p as any).projectId === this.project?.id);
             if (foundPlan) {
               this.setPlanData(foundPlan);
               localStorage.setItem(storageKey, JSON.stringify(foundPlan));

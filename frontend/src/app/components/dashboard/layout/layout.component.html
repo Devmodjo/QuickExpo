@@ -32,7 +32,7 @@
 
   <section class="dashboard-toolbar">
     <div class="primary-actions">
-      <button type="button" class="action-button primary">
+      <button type="button" class="action-button primary" (click)="openCreateModal()">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6V5Z"></path>
         </svg>
@@ -97,7 +97,11 @@
     />
   }
 
-  <app-create-project [isOpen]="isCreateModalOpen()" (close)="closeCreateModal()" />
+  <app-create-project 
+    [isOpen]="isCreateModalOpen()" 
+    (close)="closeCreateModal()" 
+    (projectCreated)="projectsUpdated.emit()" 
+  />
 
   <app-project-details 
     [isOpen]="isDetailsModalOpen()" 

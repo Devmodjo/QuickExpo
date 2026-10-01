@@ -173,7 +173,7 @@ export class ContentStudioComponent implements OnInit, OnChanges {
       next: (contents) => {
         this.isLoading.set(false);
         if (Array.isArray(contents) && contents.length > 0) {
-          const contentDto = contents[contents.length - 1];
+          const contentDto = contents.find((c) => c.id === `content_${this.project?.id}` || c.id === this.project?.id || (c as any).projectId === this.project?.id);
           if (contentDto && (contentDto.markdownContent || contentDto.title)) {
             this.setContentData(contentDto);
             if (this.project) {
@@ -182,17 +182,17 @@ export class ContentStudioComponent implements OnInit, OnChanges {
             return;
           }
         }
-        // Pas encore de contenu généré pour ce projet : déclenchement automatique
+        // Pas encore de contenu généré pour ce projet
         this.currentContent.set(null);
         this.markdownContent.set('');
         this.originalContent.set('');
-        this.triggerContentGeneration();
       },
       error: (err) => {
         this.isLoading.set(false);
         console.error('Erreur récupération contenu rédigé:', err);
         this.currentContent.set(null);
-        this.triggerContentGeneration();
+        this.markdownContent.set('');
+        this.originalContent.set('');
       }
     });
   }
