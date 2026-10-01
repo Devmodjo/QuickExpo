@@ -1,0 +1,351 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.studio-page-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  min-height: 0;
+  background-color: #f6fbf8;
+  color: #0f172a;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  overflow: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+
+.studio-page-root.dark {
+  background-color: #070b09;
+  color: #f1f5f9;
+}
+
+/* Studio Topbar */
+.studio-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.75rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(15, 61, 56, 0.15);
+  z-index: 40;
+  flex-shrink: 0;
+}
+
+.studio-page-root.dark .studio-topbar {
+  background: rgba(13, 23, 20, 0.92);
+  border-bottom: 1px solid rgba(16, 185, 129, 0.18);
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.btn-back-dashboard {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid rgba(15, 61, 56, 0.2);
+  background: transparent;
+  color: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-back-dashboard:hover {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.studio-brand-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+.badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981;
+}
+
+/* Workflow Stepper */
+.workflow-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(0, 0, 0, 0.04);
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.studio-page-root.dark .workflow-stepper {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.step-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  opacity: 0.65;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.step-tab:hover {
+  opacity: 1;
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.step-tab.active {
+  opacity: 1;
+  background: #0f3d38;
+  color: #ffffff;
+  box-shadow: 0 3px 10px rgba(15, 61, 56, 0.3);
+}
+
+.studio-page-root.dark .step-tab.active {
+  background: #10b981;
+  color: #070b09;
+}
+
+.step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.step-arrow {
+  opacity: 0.3;
+  font-size: 0.85rem;
+}
+
+/* Topbar Right */
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btn-theme-switch {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid rgba(15, 61, 56, 0.25);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-theme-switch:hover {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: #10b981;
+}
+
+/* Main Content Area */
+.studio-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  min-height: 0;
+}
+
+/* Loading & Error States */
+.studio-loading-state, .studio-error-state {
+  margin: auto;
+  text-align: center;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.spinner-ring {
+  width: 44px;
+  height: 44px;
+  border: 4px solid rgba(16, 185, 129, 0.2);
+  border-top-color: #10b981;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Export Panel */
+.export-studio-panel {
+  max-width: 960px;
+  margin: 2.5rem auto;
+  padding: 3rem;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.export-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.export-badge {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.3rem 0.8rem;
+  border-radius: 9999px;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.export-header h1 {
+  font-size: 1.85rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.export-header p {
+  font-size: 1rem;
+  opacity: 0.8;
+  max-width: 600px;
+  margin: 0;
+}
+
+.export-options-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.export-card {
+  padding: 2rem 1.5rem;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+.format-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+}
+
+.format-icon.md {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.format-icon.txt {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.format-icon.html {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.export-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.export-card p {
+  font-size: 0.88rem;
+  opacity: 0.75;
+  line-height: 1.5;
+  margin: 0;
+  flex: 1;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 900px) {
+  .studio-topbar {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0.6rem 1rem;
+  }
+
+  .workflow-stepper {
+    order: 3;
+    width: 100%;
+    justify-content: space-around;
+    overflow-x: auto;
+  }
+
+  .step-tab {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.78rem;
+  }
+
+  .export-studio-panel {
+    padding: 1.5rem 1rem;
+    margin: 1rem;
+  }
+
+  .export-options-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

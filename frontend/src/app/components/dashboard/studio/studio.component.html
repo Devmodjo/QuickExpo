@@ -1,0 +1,180 @@
+<div class="studio-page-root" [class.dark]="dashboardTheme.theme() === 'dark'">
+  <!-- Top Navigation & Workflow Bar -->
+  <header class="studio-topbar">
+    <div class="topbar-left">
+      <button type="button" class="btn-back-dashboard" (click)="backToDashboard()" title="Retourner au Tableau de Bord">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>Tableau de Bord</span>
+      </button>
+
+      <div class="studio-brand-badge">
+        <span class="badge-dot"></span>
+        <span>Studio QuickExpo</span>
+      </div>
+    </div>
+
+    <!-- Stepper Workflow Tabs -->
+    <nav class="workflow-stepper" aria-label="Étapes du workflow studio">
+      <button
+        type="button"
+        class="step-tab"
+        [class.active]="activeTab() === 'plan'"
+        (click)="setTab('plan')"
+      >
+        <span class="step-num">1</span>
+        <span class="step-label">Plan Studio</span>
+      </button>
+
+      <span class="step-arrow">→</span>
+
+      <button
+        type="button"
+        class="step-tab"
+        [class.active]="activeTab() === 'content'"
+        (click)="setTab('content')"
+      >
+        <span class="step-num">2</span>
+        <span class="step-label">Rédaction Contenu</span>
+      </button>
+
+      <span class="step-arrow">→</span>
+
+      <button
+        type="button"
+        class="step-tab"
+        [class.active]="activeTab() === 'export'"
+        (click)="setTab('export')"
+      >
+        <span class="step-num">3</span>
+        <span class="step-label">Export & Téléchargement</span>
+      </button>
+    </nav>
+
+    <div class="topbar-right">
+      <!-- Theme Switcher Toggle -->
+      <button
+        type="button"
+        class="btn-theme-switch"
+        (click)="toggleTheme()"
+        [title]="dashboardTheme.theme() === 'dark' ? 'Basculer en Mode Clair' : 'Basculer en Mode Sombre'"
+      >
+        @if (dashboardTheme.theme() === 'dark') {
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+          </svg>
+          <span>Panel Clair</span>
+        } @else {
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+          <span>Panel Sombre</span>
+        }
+      </button>
+    </div>
+  </header>
+
+  <!-- Error or Loading State -->
+  @if (isLoading()) {
+    <div class="studio-loading-state">
+      <div class="spinner-ring"></div>
+      <p>Chargement du studio de rédaction...</p>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="studio-error-state supabase-card">
+      <h2>Erreur d'accès au studio</h2>
+      <p>{{ errorMessage() }}</p>
+      <button type="button" class="btn-emerald" (click)="backToDashboard()">Retourner au Tableau de bord</button>
+    </div>
+  } @else {
+    <!-- Main Studio Views according to Active Tab -->
+    <main class="studio-main-content">
+      <!-- TAB 1: Plan Studio -->
+      @if (activeTab() === 'plan') {
+        <app-plan-studio
+          [isOpen]="true"
+          [project]="project()"
+          (close)="backToDashboard()"
+          (projectStatusUpdated)="onProjectStatusUpdated($event)"
+          (navigateToNextStep)="setTab('content')"
+        ></app-plan-studio>
+      }
+
+      <!-- TAB 2: Content Generation & Markdown Editor Studio -->
+      @if (activeTab() === 'content') {
+        <app-content-studio
+          [project]="project()"
+          [plan]="currentPlan()"
+          [standalone]="true"
+          (close)="backToDashboard()"
+          (projectStatusUpdated)="onProjectStatusUpdated($event)"
+          (navigateToNextStep)="setTab('export')"
+        ></app-content-studio>
+      }
+
+      <!-- TAB 3: Final Document Export & Download -->
+      @if (activeTab() === 'export') {
+        <div class="export-studio-panel supabase-card">
+          <header class="export-header">
+            <div class="export-badge">Étape 3 : Export Final</div>
+            <h1>Exportation & Téléchargement du Document</h1>
+            <p>
+              Votre travail sur <strong>{{ project()?.theme }}</strong> est finalisé. Choisissez ci-dessous le format d'exportation souhaité.
+            </p>
+          </header>
+
+          <div class="export-options-grid">
+            <!-- Option 1: Markdown -->
+            <div class="export-card supabase-card hover-lift">
+              <div class="format-icon md">MD</div>
+              <h3>Format Markdown (.md)</h3>
+              <p>Fichier source Markdown structuré avec balises, titres et listes, idéal pour repasser dans d'autres éditeurs.</p>
+              <button type="button" class="btn-emerald glow-emerald" (click)="downloadDocument('markdown')">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Télécharger .MD</span>
+              </button>
+            </div>
+
+            <!-- Option 2: Plain Text -->
+            <div class="export-card supabase-card hover-lift">
+              <div class="format-icon txt">TXT</div>
+              <h3>Texte Brut (.txt)</h3>
+              <p>Fichier texte simple compatible avec tous les traitements de texte et messageries.</p>
+              <button type="button" class="btn-secondary" (click)="downloadDocument('txt')">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Télécharger .TXT</span>
+              </button>
+            </div>
+
+            <!-- Option 3: HTML Web Page -->
+            <div class="export-card supabase-card hover-lift">
+              <div class="format-icon html">HTML</div>
+              <h3>Document Web (.html)</h3>
+              <p>Document web prêt à l'affichage ou à l'impression directe dans un navigateur.</p>
+              <button type="button" class="btn-secondary" (click)="downloadDocument('html')">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Télécharger .HTML</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </main>
+  }
+</div>

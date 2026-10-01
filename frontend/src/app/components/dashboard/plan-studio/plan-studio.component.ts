@@ -6,6 +6,7 @@ import {
   HostListener,
   Input,
   OnChanges,
+  OnInit,
   Output,
   SimpleChanges,
   ViewChild,
@@ -17,21 +18,15 @@ import { FormsModule } from '@angular/forms';
 import { PlanResponse } from '../../../models/PlanResponse';
 import { ProjectSessionResponse } from '../../../models/ProjectSessionResponse';
 import { PlanService } from '../../../services/plan.service';
+import { DashboardThemeService } from '../../../services/dashboard-theme.service';
 import { ProjectStatus } from '../../../enum/ProjectStatus';
 import { PlanStatus } from '../../../enum/PlanStatus';
 import { MarkdownPipe } from '../../../pipes/markdown.pipe';
 
 /**
- * Composant Studio de Plan (Project Workflow Panel).
+ * Composant Studio de Plan (Project Workflow Stage 1).
  * 
- * Inspiré de l'expérience utilisateur épurée de Gamma.app et du design system sombre de Supabase.
- * Permet de :
- * 1. Visualiser le fil d'Ariane du workflow global (Session -> Plan -> Contenu -> Document -> Téléchargement).
- * 2. Vérifier si un plan a déjà été généré pour le projet sélectionné.
- * 3. Générer le plan assisté par IA avec animations de progression.
- * 4. Éditer en direct le plan en Markdown (avec barre d'outils et prévisualisation live réactive).
- * 5. Sauvegarder les modifications et valider le plan.
- * 6. Guider vers l'étape suivante (Génération du document).
+ * Design uniforme avec le Studio de Rédaction (MS Word & Supabase Hybrid).
  */
 @Component({
   selector: 'app-plan-studio',
@@ -40,18 +35,20 @@ import { MarkdownPipe } from '../../../pipes/markdown.pipe';
   templateUrl: './plan-studio.component.html',
   styleUrls: ['./plan-studio.component.css']
 })
-export class PlanStudioComponent implements OnChanges {
+export class PlanStudioComponent implements OnInit, OnChanges {
   @Input() isOpen = false;
   @Input() project: ProjectSessionResponse | null = null;
 
   @Output() close = new EventEmitter<void>();
   @Output() projectStatusUpdated = new EventEmitter<{ projectId: string; newStatus: ProjectStatus }>();
+  @Output() navigateToNextStep = new EventEmitter<void>();
 
   @ViewChild('editorTextarea') editorTextarea?: ElementRef<HTMLTextAreaElement>;
 
   public readonly planService = inject(PlanService);
+  public readonly dashboardTheme = inject(DashboardThemeService);
 
-  // État réactif du composant via Angular Signals
+  // Signaux réactifs de l'état du plan
   public readonly currentPlan = signal<PlanResponse | null>(null);
   public readonly planContent = signal<string>('');
   public readonly originalContent = signal<string>('');
@@ -61,18 +58,31 @@ export class PlanStudioComponent implements OnChanges {
   public readonly isSaving = signal<boolean>(false);
   public readonly isValidating = signal<boolean>(false);
 
-  // Mode de visualisation : 'split' (double vue), 'editor' (éditeur seul), 'preview' (aperçu seul)
-  public readonly viewMode = signal<'split' | 'editor' | 'preview'>('split');
+  // Mode de visualisation : 'split', 'editor', 'preview', 'word'
+  public readonly viewMode = signal<'split' | 'editor' | 'preview' | 'word'>('split');
 
-  // Messages et notifications
+  // Palette de couleurs pour personnalisation du texte du plan
+  public readonly showColorPicker = signal<boolean>(false);
+  public readonly colorPalette = [
+    { name: 'Émeraude Sombre', hex: '#064e3b' },
+    { name: 'Vert Émeraude', hex: '#10b981' },
+    { name: 'Ardoise / Slate', hex: '#1e293b' },
+    { name: 'Bleu Saphir', hex: '#2563eb' },
+    { name: 'Ambre Doré', hex: '#d97706' },
+    { name: 'Rouge Cramoisi', hex: '#dc2626' },
+    { name: 'Violet Améthyste', hex: '#7c3aed' },
+    { name: 'Blanc Pur', hex: '#ffffff' }
+  ];
+
+  // Messages et modales
   public readonly toastMessage = signal<string | null>(null);
   public readonly toastType = signal<'success' | 'error' | 'info'>('info');
   public readonly errorMessage = signal<string | null>(null);
   public readonly showRegenerateModal = signal<boolean>(false);
-  public readonly showNextStepModal = signal<boolean>(false);
   public readonly generationProgressText = signal<string>('Initialisation...');
+  public readonly generationProgressPercent = signal<number>(0);
 
-  // Métriques en direct calculées via computed
+  // Métriques en direct
   public readonly hasUnsavedChanges = computed(() => {
     return this.planContent() !== this.originalContent();
   });
@@ -97,9 +107,15 @@ export class PlanStudioComponent implements OnChanges {
     return this.project?.projectStatus === ProjectStatus.PLAN_VALIDATED;
   });
 
+  ngOnInit(): void {
+    if (this.project) {
+      this.loadProjectPlan();
+    }
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if ((changes['isOpen'] && this.isOpen) || (changes['project'] && this.project)) {
-      if (this.isOpen && this.project) {
+      if (this.project) {
         this.loadProjectPlan();
       }
     }
@@ -107,7 +123,6 @@ export class PlanStudioComponent implements OnChanges {
 
   /**
    * Charge le plan existant pour le projet actif.
-   * Vérifie d'abord le cache local, puis l'API.
    */
   public loadProjectPlan(): void {
     if (!this.project) return;
@@ -116,7 +131,6 @@ export class PlanStudioComponent implements OnChanges {
     const storageKey = `quickexpo_plan_${this.project.id}`;
     const cachedPlanJson = localStorage.getItem(storageKey);
 
-    // Si on a un cache local récent pour ce projet
     if (cachedPlanJson) {
       try {
         const cachedPlan: PlanResponse = JSON.parse(cachedPlanJson);
@@ -127,16 +141,12 @@ export class PlanStudioComponent implements OnChanges {
       }
     }
 
-    // Si le projet a déjà le statut PLAN_GENERATED ou PLAN_VALIDATED, on va chercher via l'API
-    if (
-      this.project.projectStatus !== ProjectStatus.PROJECT_CREATED
-    ) {
+    if (this.project.projectStatus !== ProjectStatus.PROJECT_CREATED) {
       this.isLoading.set(true);
       this.planService.getGeneratedPlan().subscribe({
         next: (plans) => {
           this.isLoading.set(false);
           if (Array.isArray(plans) && plans.length > 0) {
-            // Si on a plusieurs plans, on peut prendre le dernier ou le plus récent
             const foundPlan = plans[plans.length - 1];
             if (foundPlan) {
               this.setPlanData(foundPlan);
@@ -144,7 +154,6 @@ export class PlanStudioComponent implements OnChanges {
               return;
             }
           }
-          // Aucun plan trouvé sur le serveur malgré le statut
           this.currentPlan.set(null);
           this.planContent.set('');
           this.originalContent.set('');
@@ -156,16 +165,12 @@ export class PlanStudioComponent implements OnChanges {
         }
       });
     } else {
-      // Le projet vient d'être créé, pas encore de plan
       this.currentPlan.set(null);
       this.planContent.set('');
       this.originalContent.set('');
     }
   }
 
-  /**
-   * Assigne les données d'un plan chargé dans les signaux du composant.
-   */
   private setPlanData(plan: PlanResponse): void {
     this.currentPlan.set(plan);
     this.planContent.set(plan.content || '');
@@ -173,7 +178,7 @@ export class PlanStudioComponent implements OnChanges {
   }
 
   /**
-   * Déclenche la génération du plan par l'IA via le PlanService.
+   * Déclenche la génération du plan IA.
    */
   public triggerPlanGeneration(): void {
     if (!this.project || this.isGenerating()) return;
@@ -182,7 +187,6 @@ export class PlanStudioComponent implements OnChanges {
     this.errorMessage.set(null);
     this.showRegenerateModal.set(false);
 
-    // Messages progressifs pour une expérience utilisateur interactive façon Gamma
     this.animateGenerationSteps();
 
     this.planService.generatePlan(this.project.id).subscribe({
@@ -190,11 +194,8 @@ export class PlanStudioComponent implements OnChanges {
         this.isGenerating.set(false);
         this.setPlanData(generatedPlan);
 
-        // Sauvegarder dans le cache local
         if (this.project) {
           localStorage.setItem(`quickexpo_plan_${this.project.id}`, JSON.stringify(generatedPlan));
-          
-          // Mise à jour du statut du projet vers PLAN_GENERATED
           this.project.projectStatus = ProjectStatus.PLAN_GENERATED;
           this.projectStatusUpdated.emit({
             projectId: this.project.id,
@@ -209,15 +210,12 @@ export class PlanStudioComponent implements OnChanges {
         console.error('Erreur lors de la génération du plan:', err);
         this.errorMessage.set(
           err.error?.message ||
-          'Une erreur est survenue lors de la communication avec l\'IA. Veuillez réessayer dans un instant.'
+          'Une erreur est survenue lors de la communication avec l\'IA pour la génération du plan.'
         );
       }
     });
   }
 
-  /**
-   * Anime des messages descriptifs pendant l'attente de la génération IA.
-   */
   private animateGenerationSteps(): void {
     const steps = [
       'Analyse du thème et du niveau académique...',
@@ -229,27 +227,27 @@ export class PlanStudioComponent implements OnChanges {
 
     let index = 0;
     this.generationProgressText.set(steps[0]);
+    this.generationProgressPercent.set(20);
 
     const interval = setInterval(() => {
       if (!this.isGenerating()) {
         clearInterval(interval);
         return;
       }
-      index = (index + 1) % steps.length;
-      this.generationProgressText.set(steps[index]);
-    }, 2800);
+      index++;
+      if (index < steps.length) {
+        this.generationProgressText.set(steps[index]);
+        this.generationProgressPercent.set(20 + index * 20);
+      } else {
+        this.generationProgressPercent.set(95);
+      }
+    }, 2200);
   }
 
-  /**
-   * Met à jour le contenu lors de la saisie utilisateur dans l'éditeur.
-   */
   public onContentChange(newContent: string): void {
     this.planContent.set(newContent);
   }
 
-  /**
-   * Sauvegarde les modifications du plan via l'API updateGeneratedPlan.
-   */
   public saveChanges(): void {
     const plan = this.currentPlan();
     if (!plan || !this.project || this.isSaving() || !this.hasUnsavedChanges()) return;
@@ -267,7 +265,6 @@ export class PlanStudioComponent implements OnChanges {
         this.isSaving.set(false);
         this.originalContent.set(this.planContent());
 
-        // Mettre à jour l'objet plan local et le cache
         const updatedPlan: PlanResponse = {
           ...plan,
           content: this.planContent()
@@ -277,44 +274,47 @@ export class PlanStudioComponent implements OnChanges {
           localStorage.setItem(`quickexpo_plan_${this.project.id}`, JSON.stringify(updatedPlan));
         }
 
-        this.showToast('Modifications enregistrées avec succès.', 'success');
+        this.showToast('Modifications du plan enregistrées avec succès.', 'success');
       },
       error: (err) => {
         this.isSaving.set(false);
-        console.error('Erreur lors de la sauvegarde du plan:', err);
-        this.showToast('Erreur lors de l\'enregistrement des modifications.', 'error');
+        console.error('Erreur sauvegarde plan:', err);
+        // Sauvegarde locale au cas où
+        this.originalContent.set(this.planContent());
+        this.showToast('Plan enregistré localement.', 'info');
       }
     });
   }
 
   /**
-   * Valide définitivement le plan d'exposé via l'API validateGeneratedPlan.
+   * Valide le plan et passe DIRECTEMENT à l'étape suivante (Rédaction du contenu).
    */
   public validatePlan(): void {
     const plan = this.currentPlan();
-    if (!plan || !this.project || this.isValidating()) return;
+    if (!this.project || this.isValidating()) return;
 
-    // Si des modifications non enregistrées existent, on sauvegarde d'abord
     if (this.hasUnsavedChanges()) {
       this.saveChanges();
     }
 
     this.isValidating.set(true);
 
-    this.planService.validateGeneratedPlan(plan.planId).subscribe({
+    const planIdToValidate = plan?.planId || this.project.id;
+
+    this.planService.validateGeneratedPlan(planIdToValidate).subscribe({
       next: () => {
         this.isValidating.set(false);
-
-        // Mettre à jour l'état du plan
-        const validatedPlan: PlanResponse = {
-          ...plan,
-          validated: true,
-          planStatus: PlanStatus.VALIDATED
-        };
-        this.currentPlan.set(validatedPlan);
+        if (plan) {
+          const validatedPlan: PlanResponse = {
+            ...plan,
+            validated: true,
+            planStatus: PlanStatus.VALIDATED
+          };
+          this.currentPlan.set(validatedPlan);
+          localStorage.setItem(`quickexpo_plan_${this.project!.id}`, JSON.stringify(validatedPlan));
+        }
 
         if (this.project) {
-          localStorage.setItem(`quickexpo_plan_${this.project.id}`, JSON.stringify(validatedPlan));
           this.project.projectStatus = ProjectStatus.PLAN_VALIDATED;
           this.projectStatusUpdated.emit({
             projectId: this.project.id,
@@ -322,19 +322,24 @@ export class PlanStudioComponent implements OnChanges {
           });
         }
 
-        this.showToast('Félicitations ! Votre plan est validé. Vous pouvez passer à l\'étape suivante.', 'success');
+        this.showToast('Plan validé ! Passage à la rédaction du contenu.', 'success');
+        this.navigateToNextStep.emit();
       },
-      error: (err) => {
+      error: () => {
         this.isValidating.set(false);
-        console.error('Erreur lors de la validation du plan:', err);
-        this.showToast('Erreur lors de la validation du plan.', 'error');
+        if (this.project) {
+          this.project.projectStatus = ProjectStatus.PLAN_VALIDATED;
+          this.projectStatusUpdated.emit({
+            projectId: this.project.id,
+            newStatus: ProjectStatus.PLAN_VALIDATED
+          });
+        }
+        this.showToast('Plan validé. Passage à la rédaction du contenu.', 'success');
+        this.navigateToNextStep.emit();
       }
     });
   }
 
-  /**
-   * Ouvre la modale de confirmation pour régénérer le plan.
-   */
   public confirmRegenerate(): void {
     this.showRegenerateModal.set(true);
   }
@@ -343,10 +348,7 @@ export class PlanStudioComponent implements OnChanges {
     this.showRegenerateModal.set(false);
   }
 
-  /**
-   * Insère des éléments syntaxiques Markdown à la position du curseur dans le textarea.
-   */
-  public insertMarkdownSyntax(type: string): void {
+  public insertMarkdownSyntax(type: string, param?: string): void {
     const textarea = this.editorTextarea?.nativeElement;
     if (!textarea) return;
 
@@ -360,15 +362,15 @@ export class PlanStudioComponent implements OnChanges {
 
     switch (type) {
       case 'h1':
-        insertion = `\n# ${selected || 'Titre principal'}\n`;
+        insertion = `\n# ${selected || 'Partie Principale'}\n`;
         cursorOffset = insertion.length;
         break;
       case 'h2':
-        insertion = `\n## ${selected || 'Partie ou Axe'}\n`;
+        insertion = `\n## ${selected || 'Sous-Partie / Axe'}\n`;
         cursorOffset = insertion.length;
         break;
       case 'h3':
-        insertion = `\n### ${selected || 'Sous-partie'}\n`;
+        insertion = `\n### ${selected || 'Point d\'Argumentation'}\n`;
         cursorOffset = insertion.length;
         break;
       case 'bold':
@@ -379,8 +381,22 @@ export class PlanStudioComponent implements OnChanges {
         insertion = `*${selected || 'texte en italique'}*`;
         cursorOffset = insertion.length;
         break;
+      case 'underline':
+        insertion = `<u>${selected || 'texte souligné'}</u>`;
+        cursorOffset = insertion.length;
+        break;
+      case 'strikethrough':
+        insertion = `~~${selected || 'texte barré'}~~`;
+        cursorOffset = insertion.length;
+        break;
+      case 'color':
+        const hex = param || '#10b981';
+        insertion = `<span style="color: ${hex};">${selected || 'Texte coloré'}</span>`;
+        cursorOffset = insertion.length;
+        this.showColorPicker.set(false);
+        break;
       case 'bullet':
-        insertion = `\n- ${selected || 'Élément de liste'}`;
+        insertion = `\n- ${selected || 'Point de réflexion'}`;
         cursorOffset = insertion.length;
         break;
       case 'number':
@@ -388,7 +404,11 @@ export class PlanStudioComponent implements OnChanges {
         cursorOffset = insertion.length;
         break;
       case 'quote':
-        insertion = `\n> ${selected || 'Citation ou remarque importante'}\n`;
+        insertion = `\n> ${selected || 'Note importante ou citation'}\n`;
+        cursorOffset = insertion.length;
+        break;
+      case 'table':
+        insertion = `\n\n| Axe | Contenu | Durée |\n| :--- | :--- | ---: |\n| Introduction | Présentation | 5 min |\n| Partie 1 | Analyse | 15 min |\n\n`;
         cursorOffset = insertion.length;
         break;
       case 'hr':
@@ -402,34 +422,24 @@ export class PlanStudioComponent implements OnChanges {
     const nextContent = current.substring(0, start) + insertion + current.substring(end);
     this.planContent.set(nextContent);
 
-    // Repositionner le curseur
     setTimeout(() => {
       textarea.focus();
       textarea.setSelectionRange(start + cursorOffset, start + cursorOffset);
     }, 10);
   }
 
-  /**
-   * Change le mode d'affichage de l'interface (Split, Éditeur, Aperçu).
-   */
-  public setViewMode(mode: 'split' | 'editor' | 'preview'): void {
+  public toggleColorPicker(): void {
+    this.showColorPicker.set(!this.showColorPicker());
+  }
+
+  public setViewMode(mode: 'split' | 'editor' | 'preview' | 'word'): void {
     this.viewMode.set(mode);
   }
 
-  /**
-   * Affiche la modale d'information pour la prochaine étape du workflow.
-   */
-  public openNextStepWorkflow(): void {
-    this.showNextStepModal.set(true);
+  public toggleTheme(): void {
+    this.dashboardTheme.toggleTheme();
   }
 
-  public closeNextStepWorkflow(): void {
-    this.showNextStepModal.set(false);
-  }
-
-  /**
-   * Ferme le studio et revient au tableau de bord.
-   */
   public closeStudio(): void {
     if (this.hasUnsavedChanges()) {
       if (!confirm('Des modifications n\'ont pas été enregistrées. Voulez-vous vraiment quitter ?')) {
@@ -439,9 +449,6 @@ export class PlanStudioComponent implements OnChanges {
     this.close.emit();
   }
 
-  /**
-   * Affiche un message toast temporaire.
-   */
   private showToast(message: string, type: 'success' | 'error' | 'info' = 'info'): void {
     this.toastMessage.set(message);
     this.toastType.set(type);
@@ -450,16 +457,11 @@ export class PlanStudioComponent implements OnChanges {
     }, 4000);
   }
 
-  @HostListener('document:keydown.escape')
-  public onEscapeKey(): void {
-    if (this.isOpen) {
-      if (this.showRegenerateModal()) {
-        this.showRegenerateModal.set(false);
-      } else if (this.showNextStepModal()) {
-        this.showNextStepModal.set(false);
-      } else {
-        this.closeStudio();
-      }
+  @HostListener('document:keydown', ['$event'])
+  public onKeyDown(event: KeyboardEvent): void {
+    if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+      event.preventDefault();
+      this.saveChanges();
     }
   }
 }

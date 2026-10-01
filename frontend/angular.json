@@ -72,6 +72,21 @@
         },
         "test": {
           "builder": "@angular/build:unit-test"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "options": {
+            "allowedHosts": ["localhost", "battalion-bullring-reckless.ngrok-free.dev"]
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "frontend:build:production"
+            },
+            "development": {
+              "buildTarget": "frontend:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
         }
       }
     }

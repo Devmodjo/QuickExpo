@@ -104,12 +104,5 @@
     [project]="selectedProject()" 
     (close)="closeDetailsModal()" 
   />
-
-  <!-- Studio de génération et d'édition de plan (Workflow étape 2) -->
-  <app-plan-studio
-    [isOpen]="isPlanStudioOpen()"
-    [project]="activeWorkflowProject()"
-    (close)="closePlanStudio()"
-    (projectStatusUpdated)="onProjectStatusUpdated($event)"
-  />
 </div>
+

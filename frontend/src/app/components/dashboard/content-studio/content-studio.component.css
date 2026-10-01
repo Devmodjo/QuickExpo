@@ -1,5 +1,5 @@
 /* ==========================================================================
-   PLAN STUDIO COMPONENT CSS (UNIFORM WITH CONTENT STUDIO & SUPABASE STYLE)
+   CONTENT STUDIO COMPONENT CSS (UNIFORM WITH PLAN STUDIO & SUPABASE STYLE)
    ========================================================================== */
 
 :host {
@@ -12,7 +12,7 @@
   overflow: hidden;
 }
 
-.plan-studio-container {
+.content-studio-container {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -40,7 +40,7 @@
   flex-shrink: 0;
 }
 
-.plan-studio-container.dark .studio-action-bar {
+.content-studio-container.dark .studio-action-bar {
   background: rgba(13, 23, 20, 0.7);
   border-bottom: 1px solid rgba(16, 185, 129, 0.12);
 }
@@ -76,7 +76,7 @@
   white-space: nowrap;
 }
 
-.plan-studio-container.dark .workflow-badge {
+.content-studio-container.dark .workflow-badge {
   background: rgba(16, 185, 129, 0.18);
   color: #34d399;
 }
@@ -95,7 +95,7 @@
   white-space: nowrap;
 }
 
-.plan-studio-container.dark .metrics-pill {
+.content-studio-container.dark .metrics-pill {
   background: rgba(255, 255, 255, 0.05);
 }
 
@@ -113,7 +113,7 @@
   border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.plan-studio-container.dark .view-mode-selector {
+.content-studio-container.dark .view-mode-selector {
   background: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.1);
 }
@@ -146,7 +146,7 @@
   box-shadow: 0 2px 8px rgba(15, 61, 56, 0.3);
 }
 
-.plan-studio-container.dark .mode-btn.active {
+.content-studio-container.dark .mode-btn.active {
   background: #10b981;
   color: #070b09;
 }
@@ -168,7 +168,7 @@
   white-space: nowrap;
 }
 
-.plan-studio-container.dark .btn-secondary {
+.content-studio-container.dark .btn-secondary {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.15);
 }
@@ -200,7 +200,7 @@
   white-space: nowrap;
 }
 
-.plan-studio-container.dark .btn-emerald {
+.content-studio-container.dark .btn-emerald {
   background: linear-gradient(135deg, #059669 0%, #10b981 100%);
   color: #070b09;
 }
@@ -354,7 +354,7 @@
   overflow: hidden;
 }
 
-.plan-studio-container.dark .progress-bar-track {
+.content-studio-container.dark .progress-bar-track {
   background: rgba(255, 255, 255, 0.1);
 }
 
@@ -384,7 +384,7 @@
   flex-shrink: 0;
 }
 
-.plan-studio-container.dark .rich-toolbar {
+.content-studio-container.dark .rich-toolbar {
   background: rgba(13, 23, 20, 0.8);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
@@ -403,7 +403,7 @@
   flex-shrink: 0;
 }
 
-.plan-studio-container.dark .tb-divider {
+.content-studio-container.dark .tb-divider {
   background: rgba(255, 255, 255, 0.1);
 }
 
@@ -428,6 +428,15 @@
   background: rgba(16, 185, 129, 0.15);
   border-color: rgba(16, 185, 129, 0.3);
   color: #10b981;
+}
+
+.tb-highlight-icon {
+  background: #fef08a;
+  color: #854d0e;
+  padding: 0 4px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 800;
 }
 
 /* Color Picker Dropdown */
@@ -517,7 +526,7 @@
   flex-shrink: 0;
 }
 
-.plan-studio-container.dark .pane-header {
+.content-studio-container.dark .pane-header {
   background: rgba(255, 255, 255, 0.03);
   border-bottom-color: rgba(255, 255, 255, 0.05);
 }
@@ -548,7 +557,7 @@
   border-right: 1px solid rgba(15, 61, 56, 0.1);
 }
 
-.plan-studio-container.dark .pane-editor {
+.content-studio-container.dark .pane-editor {
   border-right-color: rgba(255, 255, 255, 0.06);
 }
 
@@ -577,7 +586,7 @@
   padding: 1.25rem 1.5rem;
 }
 
-/* MS Word Paper Sheet Mode (Standard A4 ratio & compact styling to fit single page) */
+/* MS Word Paper Sheet Mode */
 .pane-word-layout {
   flex: 1;
   width: 100%;
@@ -588,19 +597,19 @@
   justify-content: center;
 }
 
-.plan-studio-container.dark .pane-word-layout {
+.content-studio-container.dark .pane-word-layout {
   background: rgba(0, 0, 0, 0.35);
 }
 
 .word-paper-sheet {
   width: 100%;
-  max-width: 794px;
-  min-height: 1050px;
-  padding: 2.5rem 3rem;
+  max-width: 820px;
+  min-height: 1100px;
+  padding: 3rem 3.5rem;
   background: #ffffff !important;
   color: #0f172a !important;
   border-radius: 4px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
 }
@@ -609,8 +618,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 0.75rem;
-  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
   border-bottom: 1px solid #e2e8f0;
   font-size: 0.78rem;
   color: #64748b;
@@ -620,73 +629,6 @@
 
 .word-paper-content {
   flex: 1;
-}
-
-.word-paper-content h1 {
-  font-size: 1.35rem;
-  font-weight: 800;
-  margin-top: 0.6rem;
-  margin-bottom: 0.4rem;
-  color: #0f172a;
-  border-bottom: 2px solid #10b981;
-  padding-bottom: 0.25rem;
-}
-
-.word-paper-content h2 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin-top: 0.55rem;
-  margin-bottom: 0.3rem;
-  color: #1e293b;
-}
-
-.word-paper-content h3 {
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin-top: 0.4rem;
-  margin-bottom: 0.2rem;
-  color: #334155;
-}
-
-.word-paper-content p, .word-paper-content li {
-  font-size: 0.85rem;
-  line-height: 1.45;
-  color: #334155;
-  margin-bottom: 0.3rem;
-}
-
-.word-paper-content ul, .word-paper-content ol {
-  padding-left: 1.2rem;
-  margin-bottom: 0.4rem;
-}
-
-/* ======================== Modals ======================== */
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.confirm-dialog {
-  max-width: 440px;
-  padding: 2rem;
-  border-radius: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.dialog-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  margin-top: 0.75rem;
 }
 
 /* ======================== Animations ======================== */

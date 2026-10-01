@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { ProjectSessionResponse } from '../../../models/ProjectSessionResponse';
 import { ProjectSessionService } from '../../../services/project-session.service';
 
@@ -17,10 +18,19 @@ export class ProjectDetailsComponent {
   @Output() close = new EventEmitter<void>();
 
   private projectSessionService = inject(ProjectSessionService);
+  private router = inject(Router);
 
   closeModal(): void {
     this.close.emit();
   }
+
+  openStudio(): void {
+    if (this.project?.id) {
+      this.closeModal();
+      this.router.navigate(['/studio', this.project.id]);
+    }
+  }
+
 
   deleteProject(): void {
     if (!this.project?.id) return;

@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, signal, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { ProjectCardComponent } from '../project-card/project-card.component';
 import { ProjectSessionResponse } from '../../../models/ProjectSessionResponse';
 import { SearchProjectComponent } from '../search-project/search-project.component';
 import { CreateProjectComponent } from '../create-project-popup/create-project.component';
 import { ProjectDetailsComponent } from '../project-details-popup/project-details.component';
-import { PlanStudioComponent } from '../plan-studio/plan-studio.component';
 import { ProjectSessionService } from '../../../services/project-session.service';
 import { ProjectStatus } from '../../../enum/ProjectStatus';
 
@@ -17,12 +17,12 @@ import { ProjectStatus } from '../../../enum/ProjectStatus';
     ProjectCardComponent,
     SearchProjectComponent,
     CreateProjectComponent,
-    ProjectDetailsComponent,
-    PlanStudioComponent
+    ProjectDetailsComponent
   ],
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.css']
 })
+
 export class DashboardLayoutComponent {
   @Input() projects: ProjectSessionResponse[] = [];
   @Input() filters: string[] = [];
@@ -39,20 +39,20 @@ export class DashboardLayoutComponent {
   activeWorkflowProject = signal<ProjectSessionResponse | null>(null);
   
   private projectSessionService = inject(ProjectSessionService);
+  private router = inject(Router);
 
   @Output() filterChange = new EventEmitter<string>();
   @Output() viewModeChange = new EventEmitter<'grid' | 'list'>();
   @Output() projectsUpdated = new EventEmitter<void>();
 
   /**
-   * Ouvre le studio de génération et d'édition du plan pour le projet donné.
-   * Fonctionne depuis un clic sur la project card ou depuis la recherche.
+   * Ouvre la page studio dédiée de génération et d'édition pour le projet donné.
    */
   openPlanStudio(project: ProjectSessionResponse): void {
     this.closeSearch();
-    this.activeWorkflowProject.set(project);
-    this.isPlanStudioOpen.set(true);
+    this.router.navigate(['/studio', project.id]);
   }
+
 
   /**
    * Ferme le studio de plan et réinitialise le projet sélectionné.

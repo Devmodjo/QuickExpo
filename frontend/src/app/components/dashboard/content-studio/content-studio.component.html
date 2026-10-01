@@ -1,14 +1,14 @@
-<div class="plan-studio-container" [class.dark]="dashboardTheme.theme() === 'dark'">
+<div class="content-studio-container" [class.dark]="dashboardTheme.theme() === 'dark'">
   <!-- Compact Contextual Action Bar (NO duplicate theme toggle / nav) -->
   <div class="studio-action-bar">
     <div class="action-bar-left">
-      <span class="workflow-badge">Étape 1 : Plan Studio</span>
+      <span class="workflow-badge">Étape 2 : Rédaction</span>
 
       <!-- Live metrics -->
       <div class="metrics-pill">
-        <span class="metric-item" title="Nombre de mots du plan">{{ wordCount() }} mots</span>
+        <span class="metric-item" title="Nombre de mots">{{ wordCount() }} mots</span>
         <span class="dot-separator">•</span>
-        <span class="metric-item" title="Nombre de sections">{{ sectionCount() }} axes</span>
+        <span class="metric-item" title="Temps de lecture estimé">{{ readingTime() }} min lect.</span>
       </div>
     </div>
 
@@ -74,21 +74,6 @@
 
     <div class="action-bar-right">
       <!-- Action Buttons -->
-      @if (planContent()) {
-        <button
-          type="button"
-          class="btn-secondary"
-          (click)="confirmRegenerate()"
-          title="Régénérer le plan avec l'IA"
-        >
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21.5 2v6h-6M2.5 22v-6h6"></path>
-            <path d="M2 11.5a10 10 0 0 1 18.8-4.3L21.5 8M2.5 16l1.2 0.8A10 10 0 0 0 22 12.5"></path>
-          </svg>
-          <span>Régénérer</span>
-        </button>
-      }
-
       <button
         type="button"
         class="btn-secondary"
@@ -110,9 +95,9 @@
 
       <button
         type="button"
-        class="btn-emerald glow-emerald"
-        [disabled]="isValidating() || !planContent()"
-        (click)="validatePlan()"
+        class="btn-emerald"
+        [disabled]="isValidating() || !markdownContent()"
+        (click)="validateContent()"
       >
         @if (isValidating()) {
           <span class="spinner-sm"></span>
@@ -122,7 +107,7 @@
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
             <polyline points="22 4 12 14.01 9 11.01"></polyline>
           </svg>
-          <span>Valider &amp; Rédiger</span>
+          <span>Valider &amp; Exporter</span>
         }
       </button>
     </div>
@@ -145,25 +130,29 @@
 
   <!-- Main Workspace -->
   <main class="studio-workspace">
-    <!-- Initial State / Generation CTA when no plan exists -->
-    @if (!planContent() && !isGenerating() && !isLoading()) {
+    <!-- Initial State / Generation CTA when no content exists -->
+    @if (!markdownContent() && !isGenerating() && !isLoading()) {
       <div class="empty-state-panel supabase-card">
         <div class="empty-state-icon">
           <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#10b981" stroke-width="1.5">
-            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
           </svg>
         </div>
-        <h2>Génération du Plan de l'Exposé avec l'IA</h2>
+        <h2>Génération du Contenu Rédigé pour l'Exposé</h2>
         <p>
-          Déclenchez l'analyse algorithmique de votre sujet pour concevoir un plan structuré par grandes parties et sous-parties académiques.
+          Le plan de votre exposé est prêt et validé. Cliquez ci-dessous pour lancer la rédaction intégrale assistée par IA de votre document, structurée selon les exigences méthodologiques et académiques.
         </p>
 
         <div class="empty-state-actions">
-          <button type="button" class="btn-emerald btn-lg glow-emerald" (click)="triggerPlanGeneration()">
+          <button type="button" class="btn-emerald btn-lg glow-emerald" (click)="triggerContentGeneration()">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
             </svg>
-            <span>Générer le Plan avec l'IA</span>
+            <span>Générer le Contenu Rédigé avec l'IA</span>
           </button>
         </div>
       </div>
@@ -173,7 +162,7 @@
     @if (isGenerating()) {
       <div class="generation-loading-container supabase-card">
         <div class="loading-pulse-ring"></div>
-        <h3>Conception du plan en cours par l'IA...</h3>
+        <h3>Rédaction assistée par l'IA en cours...</h3>
         <p class="progress-step-text">{{ generationProgressText() }}</p>
 
         <div class="progress-bar-track">
@@ -185,7 +174,7 @@
     }
 
     <!-- Active Rich Editor & Preview Studio Workspace -->
-    @if (planContent() && !isGenerating()) {
+    @if (markdownContent() && !isGenerating()) {
       <div class="editor-preview-container" [class.view-split]="viewMode() === 'split'" [class.view-editor]="viewMode() === 'editor'" [class.view-preview]="viewMode() === 'preview'" [class.view-word]="viewMode() === 'word'">
 
         <!-- Rich Markdown Formatting Toolbar -->
@@ -195,11 +184,14 @@
             <button type="button" class="tb-btn" (click)="insertMarkdownSyntax('h1')" title="Titre H1 (#)">
               <span class="tb-label">H1</span>
             </button>
-            <button type="button" class="tb-btn" (click)="insertMarkdownSyntax('h2')" title="Partie H2 (##)">
+            <button type="button" class="tb-btn" (click)="insertMarkdownSyntax('h2')" title="Titre H2 (##)">
               <span class="tb-label">H2</span>
             </button>
-            <button type="button" class="tb-btn" (click)="insertMarkdownSyntax('h3')" title="Sous-Partie H3 (###)">
+            <button type="button" class="tb-btn" (click)="insertMarkdownSyntax('h3')" title="Titre H3 (###)">
               <span class="tb-label">H3</span>
+            </button>
+            <button type="button" class="tb-btn" (click)="insertMarkdownSyntax('h4')" title="Titre H4 (####)">
+              <span class="tb-label">H4</span>
             </button>
           </div>
 
@@ -219,16 +211,20 @@
             <button type="button" class="tb-btn" (click)="insertMarkdownSyntax('strikethrough')" title="Barré (~~texte~~)">
               <s style="font-size: 14px;">S</s>
             </button>
+            <button type="button" class="tb-btn" (click)="insertMarkdownSyntax('mark')" title="Surligner (<mark>texte</mark>)">
+              <span class="tb-highlight-icon">M</span>
+            </button>
           </div>
 
           <div class="tb-divider"></div>
 
           <!-- Text Color Picker Dropdown -->
           <div class="toolbar-group color-picker-wrapper">
-            <button type="button" class="tb-btn color-trigger-btn" (click)="toggleColorPicker()" title="Changer la couleur du texte">
+            <button type="button" class="tb-btn color-trigger-btn" (click)="toggleColorPicker()" title="Changer la couleur du texte sélectionné">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
                 <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
+                <path d="M2 2l7.586 7.586"></path>
                 <circle cx="11" cy="11" r="2"></circle>
               </svg>
               <span>Couleur</span>
@@ -273,18 +269,40 @@
                 <line x1="10" y1="18" x2="21" y2="18"></line>
                 <path d="M4 6h1v4"></path>
                 <path d="M4 10h2"></path>
+                <path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"></path>
               </svg>
             </button>
+            <button type="button" class="tb-btn" (click)="insertMarkdownSyntax('checklist')" title="Liste de tâches ([ ])">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 11 12 14 22 4"></polyline>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+              </svg>
+            </button>
+          </div>
+
+          <div class="tb-divider"></div>
+
+          <!-- Advanced Blocks & Elements -->
+          <div class="toolbar-group">
             <button type="button" class="tb-btn" (click)="insertMarkdownSyntax('quote')" title="Citation ou Remarque (>)">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2h3c0 4-4 6-4 6z"></path>
+                <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2h-4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2h3c0 4-4 6-4 6z"></path>
               </svg>
             </button>
-            <button type="button" class="tb-btn" (click)="insertMarkdownSyntax('table')" title="Tableau de timing / plan">
+            <button type="button" class="tb-btn" (click)="insertMarkdownSyntax('code')" title="Code en ligne (`code`)">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+            </button>
+            <button type="button" class="tb-btn" (click)="insertMarkdownSyntax('table')" title="Insérer un tableau Markdown">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="3" y1="15" x2="21" y2="15"></line>
                 <line x1="9" y1="3" x2="9" y2="21"></line>
+                <line x1="15" y1="3" x2="15" y2="21"></line>
               </svg>
             </button>
             <button type="button" class="tb-btn" (click)="insertMarkdownSyntax('hr')" title="Séparateur horizontal (---)">
@@ -301,15 +319,15 @@
           @if (viewMode() === 'split' || viewMode() === 'editor') {
             <div class="pane-editor">
               <div class="pane-header">
-                <span class="pane-title">Éditeur du Plan (Markdown)</span>
+                <span class="pane-title">Éditeur Markdown (MS Word Style)</span>
                 <span class="pane-info">{{ charCount() }} caractères</span>
               </div>
               <textarea
                 #editorTextarea
                 class="markdown-textarea"
-                [ngModel]="planContent()"
+                [ngModel]="markdownContent()"
                 (ngModelChange)="onContentChange($event)"
-                placeholder="Rédigez ou éditez le plan de votre exposé en Markdown..."
+                placeholder="Rédigez ou éditez votre document au format Markdown..."
                 spellcheck="true"
               ></textarea>
             </div>
@@ -319,24 +337,24 @@
           @if (viewMode() === 'split' || viewMode() === 'preview') {
             <div class="pane-preview">
               <div class="pane-header">
-                <span class="pane-title">Rendu Visuel du Plan</span>
+                <span class="pane-title">Rendu Visuel Markdown Réel</span>
                 <span class="pane-badge">Live Preview</span>
               </div>
               <div class="preview-scroll-area">
-                <div class="markdown-body" [innerHTML]="planContent() | markdown"></div>
+                <div class="markdown-body" [innerHTML]="markdownContent() | markdown"></div>
               </div>
             </div>
           }
 
-          <!-- MS Word Page Layout Mode -->
+          <!-- MS Word Page Layout Mode (Paper Sheet Simulation) -->
           @if (viewMode() === 'word') {
             <div class="pane-word-layout">
               <div class="word-paper-sheet supabase-card">
                 <header class="word-paper-header">
-                  <span class="doc-header-title">Plan : {{ project?.theme }}</span>
+                  <span class="doc-header-title">{{ documentTitle() }}</span>
                   <span class="doc-header-page">Page 1 sur 1</span>
                 </header>
-                <article class="markdown-body word-paper-content" [innerHTML]="planContent() | markdown"></article>
+                <article class="markdown-body word-paper-content" [innerHTML]="markdownContent() | markdown"></article>
               </div>
             </div>
           }
@@ -344,23 +362,4 @@
       </div>
     }
   </main>
-
-  <!-- Modal de confirmation de régénération -->
-  @if (showRegenerateModal()) {
-    <div class="modal-backdrop" (click)="cancelRegenerate()">
-      <div class="confirm-dialog supabase-card" (click)="$event.stopPropagation()">
-        <h3>Régénérer le plan avec l'IA ?</h3>
-        <p>
-          Cette action va créer une toute nouvelle proposition de structure par l'IA.
-          Vos modifications actuelles seront remplacées.
-        </p>
-        <div class="dialog-actions">
-          <button type="button" class="btn-secondary" (click)="cancelRegenerate()">Annuler</button>
-          <button type="button" class="btn-emerald" (click)="triggerPlanGeneration()">
-            Confirmer et régénérer
-          </button>
-        </div>
-      </div>
-    </div>
-  }
 </div>
