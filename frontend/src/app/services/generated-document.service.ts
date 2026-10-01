@@ -1,4 +1,6 @@
 
 
 
-export class Gene
+export class GenerateDocumentService{
+    
+}
